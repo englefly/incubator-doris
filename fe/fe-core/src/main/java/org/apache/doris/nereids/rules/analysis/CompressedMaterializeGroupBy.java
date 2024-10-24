@@ -22,9 +22,8 @@ import org.apache.doris.nereids.rules.RuleType;
 import org.apache.doris.nereids.trees.expressions.Alias;
 import org.apache.doris.nereids.trees.expressions.Expression;
 import org.apache.doris.nereids.trees.expressions.NamedExpression;
-import org.apache.doris.nereids.trees.expressions.Slot;
 import org.apache.doris.nereids.trees.expressions.SlotReference;
-import org.apache.doris.nereids.trees.expressions.functions.agg.AnyValue;
+import org.apache.doris.nereids.trees.expressions.functions.scalar.DecodeAsVarchar;
 import org.apache.doris.nereids.trees.expressions.functions.scalar.EncodeAsBigInt;
 import org.apache.doris.nereids.trees.expressions.functions.scalar.EncodeAsInt;
 import org.apache.doris.nereids.trees.expressions.functions.scalar.EncodeAsLargeInt;
@@ -32,15 +31,15 @@ import org.apache.doris.nereids.trees.plans.Plan;
 import org.apache.doris.nereids.trees.plans.logical.LogicalAggregate;
 import org.apache.doris.nereids.types.DataType;
 import org.apache.doris.nereids.types.coercion.CharacterType;
+import org.apache.doris.nereids.util.ExpressionUtils;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * select A from T group by A
@@ -81,67 +80,45 @@ public class CompressedMaterializeGroupBy extends OneAnalysisRuleFactory {
     [not support] select substring(k, 1,2), sum(v) from t group by k
     [support]  select A as B from T group by A
     */
-    private Map<Expression, Expression> getEncodableGroupByExpressions(LogicalAggregate<Plan> aggregate) {
-        Map<Expression, Expression> encodableGroupbyExpressions = Maps.newHashMap();
-        Set<Slot> slotShouldNotEncode = Sets.newHashSet();
-        for (NamedExpression ne : aggregate.getOutputExpressions()) {
-            if (ne instanceof Alias) {
-                Expression child = ((Alias) ne).child();
-                //support: select A as B from T group by A
-                if (!(child instanceof SlotReference)) {
-                    slotShouldNotEncode.addAll(child.getInputSlots());
-                }
-            }
-        }
+    private Map<Expression, Expression> getEncodeGroupByExpressions(LogicalAggregate<Plan> aggregate) {
+        Map<Expression, Expression> encodeGroupbyExpressions = Maps.newHashMap();
         for (Expression gb : aggregate.getGroupByExpressions()) {
             Expression encodeExpr = getEncodeExpression(gb);
             if (encodeExpr != null) {
-                boolean encodable = true;
-                for (Slot gbs : gb.getInputSlots()) {
-                    if (slotShouldNotEncode.contains(gbs)) {
-                        encodable = false;
-                        break;
-                    }
-                }
-                if (encodable) {
-                    encodableGroupbyExpressions.put(gb, encodeExpr);
-                }
+                encodeGroupbyExpressions.put(gb, encodeExpr);
             }
         }
-        return encodableGroupbyExpressions;
+        return encodeGroupbyExpressions;
     }
 
     private LogicalAggregate<Plan> compressedMaterialize(LogicalAggregate<Plan> aggregate) {
-        List<Alias> encodedExpressions = Lists.newArrayList();
-        Map<Expression, Expression> encodableGroupByExpressions = getEncodableGroupByExpressions(aggregate);
-        if (!encodableGroupByExpressions.isEmpty()) {
+        Map<Expression, Expression> encodeGroupByExpressions = getEncodeGroupByExpressions(aggregate);
+        if (!encodeGroupByExpressions.isEmpty()) {
             List<Expression> newGroupByExpressions = Lists.newArrayList();
             for (Expression gp : aggregate.getGroupByExpressions()) {
-                if (encodableGroupByExpressions.containsKey(gp)) {
-                    Alias alias = new Alias(encodableGroupByExpressions.get(gp));
-                    newGroupByExpressions.add(alias);
-                    encodedExpressions.add(alias);
+                newGroupByExpressions.add(encodeGroupByExpressions.getOrDefault(gp, gp));
+            }
+            List<NamedExpression> newOutputs = Lists.newArrayList();
+            Map<Expression, Expression> decodeMap = new HashMap<>();
+            for (Expression gp : encodeGroupByExpressions.keySet()) {
+                decodeMap.put(gp, new DecodeAsVarchar(encodeGroupByExpressions.get(gp)));
+            }
+            for (NamedExpression out : aggregate.getOutputExpressions()) {
+                Expression replaced = ExpressionUtils.replace(out, decodeMap);
+                if (out != replaced) {
+                    if (out instanceof SlotReference) {
+                        newOutputs.add(new Alias(out.getExprId(), replaced, out.getName()));
+                    } else if (out instanceof Alias) {
+                        newOutputs.add(((Alias) out).withChildren(replaced.children()));
+                    } else {
+                        // should not reach here
+                        Preconditions.checkArgument(false, "output abnormal: " + aggregate);
+                    }
                 } else {
-                    newGroupByExpressions.add(gp);
+                    newOutputs.add(out);
                 }
             }
-            List<NamedExpression> newOutput = Lists.newArrayList();
-            for (NamedExpression ne : aggregate.getOutputExpressions()) {
-                // output A => output Any_value(A)
-                if (ne instanceof SlotReference && encodableGroupByExpressions.containsKey(ne)) {
-                    newOutput.add(new Alias(ne.getExprId(), new AnyValue(ne), ne.getName()));
-                } else if (ne instanceof Alias && encodableGroupByExpressions.containsKey(((Alias) ne).child())) {
-                    Expression child = ((Alias) ne).child();
-                    Preconditions.checkArgument(child instanceof SlotReference,
-                            "encode %s failed, not a slot", child);
-                    newOutput.add(new Alias(((SlotReference) child).getExprId(), new AnyValue(child),
-                            "any_value(" + child + ")"));
-                } else {
-                    newOutput.add(ne);
-                }
-            }
-            newOutput.addAll(encodedExpressions);
-            aggregate = aggregate.withGroupByAndOutput(newGroupByExpressions, newOutput);
+            aggregate = aggregate.withGroupByAndOutput(newGroupByExpressions, newOutputs);
         }
         return aggregate;
     }
