@@ -211,7 +211,7 @@ public class ExpressionEstimation extends ExpressionVisitor<ColumnStatistic, Sta
                     long min = dateMinLiteral.getValue();
                     builder.setMinValue(min);
                     builder.setMinExpr(dateMinLiteral.toLegacyLiteral());
-                } catch (AnalysisException e) {
+                } catch (Exception e) {
                     convertSuccess = false;
                 }
             }
