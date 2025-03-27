@@ -571,14 +571,20 @@ public class StatsCalculator extends DefaultPlanVisitor<Statistics, Void> {
             });
             for (SlotReference slot : visibleOutputSlots) {
                 ColumnStatistic cache;
-                if (ConnectContext.get() != null && ConnectContext.get().getSessionVariable().enablePartitionAnalyze) {
-                    cache = getColumnStatsFromPartitionCacheOrTableCache(
-                            olapScan, slot, selectedPartitionNames);
+                if (((CatalogRelation) olapScan).getOperativeSlots().contains(slot)) {
+                    // only fetch operative col's stats
+                    if (ConnectContext.get() != null
+                            && ConnectContext.get().getSessionVariable().enablePartitionAnalyze) {
+                        cache = getColumnStatsFromPartitionCacheOrTableCache(
+                                olapScan, slot, selectedPartitionNames);
+                    } else {
+                        cache = getColumnStatsFromTableCache((CatalogRelation) olapScan, slot);
+                    }
+                    if (slot.getColumn().isPresent()) {
+                        cache = updateMinMaxForPartitionKey(olapTable, selectedPartitionNames, slot, cache);
+                    }
                 } else {
-                    cache = getColumnStatsFromTableCache((CatalogRelation) olapScan, slot);
-                }
-                if (slot.getColumn().isPresent()) {
-                    cache = updateMinMaxForPartitionKey(olapTable, selectedPartitionNames, slot, cache);
+                    cache = ColumnStatistic.buildUnknownByDataType(slot.getDataType());
                 }
                 ColumnStatisticBuilder colStatsBuilder = new ColumnStatisticBuilder(cache,
                         selectedPartitionsRowCount);
@@ -590,7 +596,13 @@ public class StatsCalculator extends DefaultPlanVisitor<Statistics, Void> {
         } else {
             // get table level stats
             for (SlotReference slot : visibleOutputSlots) {
-                ColumnStatistic cache = getColumnStatsFromTableCache((CatalogRelation) olapScan, slot);
+                ColumnStatistic cache;
+                if (((CatalogRelation) olapScan).getOperativeSlots().contains(slot)) {
+                    // only fetch operative col's stats
+                    cache = getColumnStatsFromTableCache((CatalogRelation) olapScan, slot);
+                } else {
+                        cache = ColumnStatistic.buildUnknownByDataType(slot.getDataType());
+                }
                 ColumnStatisticBuilder colStatsBuilder = new ColumnStatisticBuilder(cache, tableRowCount);
                 colStatsBuilder.normalizeAvgSizeByte(slot);
                 builder.putColumnStatistics(slot, colStatsBuilder.build());

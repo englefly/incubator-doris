@@ -25,6 +25,7 @@ import org.apache.doris.nereids.trees.expressions.SlotReference;
 import org.apache.doris.nereids.types.coercion.CharacterType;
 
 import java.text.DecimalFormat;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -268,8 +269,18 @@ public class Statistics {
         builder.append(prefix).append("tupleSize=")
                 .append(computeTupleSize(getAllSlotsFromColumnStatsMap())).append("\n");
         builder.append(prefix).append("width=").append(widthInJoinCluster).append("\n");
-        for (Entry<Expression, ColumnStatistic> entry : expressionToColumnStats.entrySet()) {
-            builder.append(prefix).append(entry.getKey()).append(" -> ").append(entry.getValue()).append("\n");
+        List<Expression> sortedExprs = expressionToColumnStats.keySet().stream().sorted(new Comparator<Expression>() {
+            @Override
+            public int compare(Expression e1, Expression e2) {
+                return e1.toString().compareTo(e2.toString());
+            }
+        }).collect(Collectors.toList());
+        for (Expression expr : sortedExprs) {
+            if (!expressionToColumnStats.get(expr).isUnKnown()) {
+                builder.append(prefix).append(expr).append("[").append(expr.getDataType()).append("]")
+                        .append(" -> ").append(expressionToColumnStats.get(expr))
+                        .append("\n");
+            }
         }
         return builder.toString();
     }

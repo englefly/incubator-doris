@@ -22,6 +22,8 @@ import org.apache.doris.catalog.Column;
 import org.apache.doris.catalog.Type;
 import org.apache.doris.common.AnalysisException;
 import org.apache.doris.datasource.InternalCatalog;
+import org.apache.doris.nereids.types.DataType;
+import org.apache.doris.nereids.types.coercion.CharacterType;
 import org.apache.doris.persist.gson.GsonUtils;
 import org.apache.doris.statistics.util.StatisticsUtil;
 
@@ -368,5 +370,15 @@ public class ColumnStatistic {
 
     public ColumnStatistic withAvgSizeByte(double avgSizeByte) {
         return new ColumnStatisticBuilder(this).setAvgSizeByte(avgSizeByte).build();
+    }
+
+    public static ColumnStatistic buildUnknownByDataType(DataType dataType) {
+        ColumnStatisticBuilder builder = new ColumnStatisticBuilder(UNKNOWN);
+        if (dataType.isStringLikeType()) {
+            builder.setAvgSizeByte(Math.min(CharacterType.DEFAULT_WIDTH, dataType.width()));
+        } else {
+            builder.setAvgSizeByte(dataType.width());
+        }
+        return builder.build();
     }
 }
