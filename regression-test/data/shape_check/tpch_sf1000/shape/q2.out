@@ -13,9 +13,13 @@ root:Group[@23]
     tupleSize=107.0
     width=1
     n_name#22[VARCHAR(25)] -> ndv=6.3575, min=18379742475602240.000000(ALGERIA), max=24287410113102156.000000(VIETNAM), count=25.0000, numNulls=0.0000, avgSizeByte=16.000000
+    p_mfgr#2[VARCHAR(25)] -> unknown(2.0E8)
     p_partkey#0[INT] -> ndv=6.3575, min=1.000000(1), max=200000000.000000(200000000), count=200000000.0000, numNulls=0.0000, avgSizeByte=4.000000
     s_acctbal#14[DECIMALV3(15, 2)] -> ndv=6.3575, min=-999.990000(-999.99), max=9999.990000(9999.99), count=10000000.0000, numNulls=0.0000, avgSizeByte=8.000000
+    s_address#11[VARCHAR(40)] -> unknown(1.0E7)
+    s_comment#15[VARCHAR(101)] -> unknown(1.0E7)
     s_name#10[VARCHAR(25)] -> ndv=6.3575, min=23491548849924452.000000(Supplier#000000001), max=23491548849924452.000000(Supplier#010000000), count=10000000.0000, numNulls=0.0000, avgSizeByte=16.000000
+    s_phone#13[VARCHAR(15)] -> unknown(1.0E7)
   lowest Plan(cost, properties, plan, childrenRequires)
 
     1.8524402202538624E9 ANY
@@ -41,7 +45,13 @@ Group[@0]
     rows=2.0E8
     tupleSize=100.0
     width=1
+    p_brand#3[VARCHAR(10)] -> unknown(2.0E8)
+    p_comment#8[VARCHAR(23)] -> unknown(2.0E8)
+    p_container#6[VARCHAR(10)] -> unknown(2.0E8)
+    p_mfgr#2[VARCHAR(25)] -> unknown(2.0E8)
+    p_name#1[VARCHAR(55)] -> unknown(2.0E8)
     p_partkey#0[INT] -> ndv=200000000.0000, min=1.000000(1), max=200000000.000000(200000000), count=200000000.0000, numNulls=0.0000, avgSizeByte=4.000000
+    p_retailprice#7[DECIMALV3(15, 2)] -> unknown(2.0E8)
     p_size#5[INT] -> ndv=50.0000, min=1.000000(1), max=50.000000(50), count=200000000.0000, numNulls=0.0000, avgSizeByte=4.000000
     p_type#4[VARCHAR(25)] -> ndv=150.0000, min=19495781288332632.000000(ECONOMY ANODIZED BRASS), max=23455062529687888.000000(STANDARD POLISHED TIN), count=200000000.0000, numNulls=0.0000, avgSizeByte=16.000000
   lowest Plan(cost, properties, plan, childrenRequires)
@@ -73,7 +83,13 @@ Group[@1]
     rows=800000.0
     tupleSize=100.0
     width=1
+    p_brand#3[VARCHAR(10)] -> unknown(2.0E8)
+    p_comment#8[VARCHAR(23)] -> unknown(2.0E8)
+    p_container#6[VARCHAR(10)] -> unknown(2.0E8)
+    p_mfgr#2[VARCHAR(25)] -> unknown(2.0E8)
+    p_name#1[VARCHAR(55)] -> unknown(2.0E8)
     p_partkey#0[INT] -> ndv=800000.0000, min=1.000000(1), max=200000000.000000(200000000), count=200000000.0000, numNulls=0.0000, avgSizeByte=4.000000
+    p_retailprice#7[DECIMALV3(15, 2)] -> unknown(2.0E8)
     p_size#5[INT] -> ndv=1.0000, min=15.000000(15), max=15.000000(15), count=0.0000, numNulls=0.0000, avgSizeByte=4.000000
     p_type#4[VARCHAR(25)] -> ndv=30.0000, min=19495781288332632.000000(ECONOMY ANODIZED BRASS), max=23455062529687888.000000(STANDARD POLISHED TIN), count=200000000.0000, numNulls=0.0000, avgSizeByte=16.000000
   lowest Plan(cost, properties, plan, childrenRequires)
@@ -106,6 +122,7 @@ Group[@2]
     rows=800000.0
     tupleSize=20.0
     width=1
+    p_mfgr#2[VARCHAR(25)] -> unknown(2.0E8)
     p_partkey#0[INT] -> ndv=800000.0000, min=1.000000(1), max=200000000.000000(200000000), count=200000000.0000, numNulls=0.0000, avgSizeByte=4.000000
   lowest Plan(cost, properties, plan, childrenRequires)
 
@@ -141,6 +158,8 @@ Group[@3]
     rows=8.0E8
     tupleSize=36.0
     width=1
+    ps_availqty#18[INT] -> unknown(8.0E8)
+    ps_comment#20[VARCHAR(199)] -> unknown(8.0E8)
     ps_partkey#16[INT] -> ndv=200778064.0000, min=1.000000(1), max=200000000.000000(200000000), count=800000000.0000, numNulls=0.0000, avgSizeByte=4.000000
     ps_suppkey#17[INT] -> ndv=10031328.0000, min=1.000000(1), max=10000000.000000(10000000), count=800000000.0000, numNulls=0.0000, avgSizeByte=4.000000
     ps_supplycost#19[DECIMALV3(15, 2)] -> ndv=100279.0000, min=1.000000(1.00), max=1000.000000(1000.00), count=800000000.0000, numNulls=0.0000, avgSizeByte=8.000000
@@ -176,8 +195,8 @@ Group[@4]
     id:740#4 cost=1.0 [1/0/0/] estRows=-1 children=[@3 ] (plan=PhysicalProject[741]@4 ( stats=null, projects=[ps_partkey#16, ps_suppkey#17, ps_supplycost#19] ))
   enforcers:
     id:918#4 cost=5.866666666666666E8 [266666666/0/213333333/] estRows=800,000,000 children=[@4 ] (plan=PhysicalDistribute[919]@4 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[17], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[17]], exprIdToEquivalenceSet={17=0} ) ))
-    id:938#4 cost=5.866666666666666E8 [266666666/0/213333333/] estRows=-1 children=[@4 ] (plan=PhysicalDistribute[939]@4 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[17], shuffleType=STORAGE_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[17]], exprIdToEquivalenceSet={17=0} ) ))
     id:948#4 cost=5.866666666666666E8 [266666666/0/213333333/] estRows=-1 children=[@4 ] (plan=PhysicalDistribute[949]@4 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[17], shuffleType=STORAGE_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[17]], exprIdToEquivalenceSet={17=0} ) ))
+    id:938#4 cost=5.866666666666666E8 [266666666/0/213333333/] estRows=-1 children=[@4 ] (plan=PhysicalDistribute[939]@4 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[17], shuffleType=STORAGE_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[17]], exprIdToEquivalenceSet={17=0} ) ))
   chosen expression id: 740
   chosen properties: DistributionSpecHash ( orderedShuffledColumns=[16], shuffleType=NATURAL, tableId=1743132380532, selectedIndexId=1743132380533, partitionIds=[1743132380531], equivalenceExprIds=[[16]], exprIdToEquivalenceSet={16=0} ) Order: ([])
   stats
@@ -232,6 +251,7 @@ Group[@5]
     rows=3187599.219006316
     tupleSize=36.0
     width=2
+    p_mfgr#2[VARCHAR(25)] -> unknown(2.0E8)
     p_partkey#0[INT] -> ndv=800000.0000, min=1.000000(1), max=200000000.000000(200000000), count=200000000.0000, numNulls=0.0000, avgSizeByte=4.000000
     ps_partkey#16[INT] -> ndv=800000.0000, min=1.000000(1), max=200000000.000000(200000000), count=800000000.0000, numNulls=0.0000, avgSizeByte=4.000000
     ps_suppkey#17[INT] -> ndv=3187599.2190, min=1.000000(1), max=10000000.000000(10000000), count=800000000.0000, numNulls=0.0000, avgSizeByte=4.000000
@@ -267,9 +287,9 @@ Group[@6]
   physical expressions:
     id:712#6 cost=1.0 [1/0/0/] estRows=-1 children=[@5 ] (plan=PhysicalProject[713]@6 ( stats=null, projects=[p_partkey#0, p_mfgr#2, ps_suppkey#17, ps_supplycost#19] ))
   enforcers:
-    id:807#6 cost=3612612.4482071586 [1062533/0/1700052/] estRows=-1 children=[@6 ] (plan=PhysicalDistribute[808]@6 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[17], shuffleType=STORAGE_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[17]], exprIdToEquivalenceSet={17=0} ) ))
-    id:810#6 cost=7650238.125615159 [0/0/5100158/] estRows=3,187,599.22 children=[@6 ] (plan=PhysicalDistribute[811]@6 ( stats=null, distributionSpec=DistributionSpecReplicated ))
     id:762#6 cost=3612612.4482071586 [1062533/0/1700052/] estRows=3,187,599.22 children=[@6 ] (plan=PhysicalDistribute[763]@6 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[17], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[17]], exprIdToEquivalenceSet={17=0} ) ))
+    id:810#6 cost=7650238.125615159 [0/0/5100158/] estRows=3,187,599.22 children=[@6 ] (plan=PhysicalDistribute[811]@6 ( stats=null, distributionSpec=DistributionSpecReplicated ))
+    id:807#6 cost=3612612.4482071586 [1062533/0/1700052/] estRows=-1 children=[@6 ] (plan=PhysicalDistribute[808]@6 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[17], shuffleType=STORAGE_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[17]], exprIdToEquivalenceSet={17=0} ) ))
     id:835#6 cost=3612612.4482071586 [1062533/0/1700052/] estRows=-1 children=[@6 ] (plan=PhysicalDistribute[836]@6 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[17], shuffleType=STORAGE_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[17]], exprIdToEquivalenceSet={17=0} ) ))
   chosen enforcer(id, requiredProperties):
       (0)807,  DistributionSpecHash ( orderedShuffledColumns=[17], shuffleType=STORAGE_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[17]], exprIdToEquivalenceSet={17=0} ) Order: ([])
@@ -279,6 +299,7 @@ Group[@6]
     rows=3187599.219006316
     tupleSize=32.0
     width=2
+    p_mfgr#2[VARCHAR(25)] -> unknown(2.0E8)
     p_partkey#0[INT] -> ndv=800000.0000, min=1.000000(1), max=200000000.000000(200000000), count=200000000.0000, numNulls=0.0000, avgSizeByte=4.000000
     ps_suppkey#17[INT] -> ndv=3187599.2190, min=1.000000(1), max=10000000.000000(10000000), count=800000000.0000, numNulls=0.0000, avgSizeByte=4.000000
     ps_supplycost#19[DECIMALV3(15, 2)] -> ndv=100279.0000, min=1.000000(1.00), max=1000.000000(1000.00), count=800000000.0000, numNulls=0.0000, avgSizeByte=8.000000
@@ -317,11 +338,11 @@ Group[@7]
   physical expressions:
     id:775#7 cost=1.0E7 [10000000/0/0/] estRows=-1 children=[ ] (plan=PhysicalOlapScan[supplier operativeSlots([s_suppkey#9, s_name#10, s_nationkey#12, s_acctbal#14])]@7 ( stats=null ))
   enforcers:
+    id:829#7 cost=2.3083333333333332E7 [3333333/0/13166666/] estRows=-1 children=[@7 ] (plan=PhysicalDistribute[830]@7 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[9], shuffleType=EXECUTION_BUCKETED, tableId=1743132380996, selectedIndexId=1743132380997, partitionIds=[1743132380995], equivalenceExprIds=[[9]], exprIdToEquivalenceSet={9=0} ) ))
+    id:778#7 cost=2.3083333333333332E7 [3333333/0/13166666/] estRows=-1 children=[@7 ] (plan=PhysicalDistribute[779]@7 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[9], shuffleType=EXECUTION_BUCKETED, tableId=1743132380996, selectedIndexId=1743132380997, partitionIds=[1743132380995], equivalenceExprIds=[[9]], exprIdToEquivalenceSet={9=0} ) ))
     id:781#7 cost=5.925E7 [0/0/39500000/] estRows=10,000,000 children=[@7 ] (plan=PhysicalDistribute[782]@7 ( stats=null, distributionSpec=DistributionSpecReplicated ))
     id:942#7 cost=2.3083333333333332E7 [3333333/0/13166666/] estRows=-1 children=[@7 ] (plan=PhysicalDistribute[943]@7 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[9], shuffleType=EXECUTION_BUCKETED, tableId=1743132380996, selectedIndexId=1743132380997, partitionIds=[1743132380995], equivalenceExprIds=[[9]], exprIdToEquivalenceSet={9=0} ) ))
-    id:778#7 cost=2.3083333333333332E7 [3333333/0/13166666/] estRows=-1 children=[@7 ] (plan=PhysicalDistribute[779]@7 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[9], shuffleType=EXECUTION_BUCKETED, tableId=1743132380996, selectedIndexId=1743132380997, partitionIds=[1743132380995], equivalenceExprIds=[[9]], exprIdToEquivalenceSet={9=0} ) ))
     id:924#7 cost=2.3083333333333332E7 [3333333/0/13166666/] estRows=-1 children=[@7 ] (plan=PhysicalDistribute[925]@7 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[9], shuffleType=EXECUTION_BUCKETED, tableId=1743132380996, selectedIndexId=1743132380997, partitionIds=[1743132380995], equivalenceExprIds=[[9]], exprIdToEquivalenceSet={9=0} ) ))
-    id:829#7 cost=2.3083333333333332E7 [3333333/0/13166666/] estRows=-1 children=[@7 ] (plan=PhysicalDistribute[830]@7 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[9], shuffleType=EXECUTION_BUCKETED, tableId=1743132380996, selectedIndexId=1743132380997, partitionIds=[1743132380995], equivalenceExprIds=[[9]], exprIdToEquivalenceSet={9=0} ) ))
   chosen expression id: 775
   chosen properties: DistributionSpecHash ( orderedShuffledColumns=[9], shuffleType=NATURAL, tableId=1743132380996, selectedIndexId=1743132380997, partitionIds=[1743132380995], equivalenceExprIds=[[9]], exprIdToEquivalenceSet={9=0} ) Order: ([])
   stats
@@ -329,8 +350,11 @@ Group[@7]
     tupleSize=79.0
     width=1
     s_acctbal#14[DECIMALV3(15, 2)] -> ndv=1109296.0000, min=-999.990000(-999.99), max=9999.990000(9999.99), count=10000000.0000, numNulls=0.0000, avgSizeByte=8.000000
+    s_address#11[VARCHAR(40)] -> unknown(1.0E7)
+    s_comment#15[VARCHAR(101)] -> unknown(1.0E7)
     s_name#10[VARCHAR(25)] -> ndv=9992858.0000, min=23491548849924452.000000(Supplier#000000001), max=23491548849924452.000000(Supplier#010000000), count=10000000.0000, numNulls=0.0000, avgSizeByte=16.000000
     s_nationkey#12[INT] -> ndv=25.0000, min=0.000000(0), max=24.000000(24), count=10000000.0000, numNulls=0.0000, avgSizeByte=4.000000
+    s_phone#13[VARCHAR(15)] -> unknown(1.0E7)
     s_suppkey#9[INT] -> ndv=10000000.0000, min=1.000000(1), max=10000000.000000(10000000), count=10000000.0000, numNulls=0.0000, avgSizeByte=4.000000
   lowest Plan(cost, properties, plan, childrenRequires)
 
@@ -365,20 +389,24 @@ Group[@8]
     id:707#8 cost=6.536499329367619E7 [55364993/10000000/0/] estRows=-1 children=[@6, @7 ] (plan=PhysicalHashJoin[708]@8 ( stats=null, type=INNER_JOIN, hashCondition=[(s_suppkey#9 = ps_suppkey#17)], otherCondition=[], markCondition=[] ))
     id:804#8 cost=3.199118162013191E7 [28803582/3187599/0/] estRows=-1 children=[@7, @6 ] (plan=PhysicalHashJoin[805]@8 ( stats=null, type=INNER_JOIN, hashCondition=[(s_suppkey#9 = ps_suppkey#17)], otherCondition=[], markCondition=[] ))
   enforcers:
-    id:838#8 cost=9908120.905744633 [1062533/0/5897058/] estRows=3,187,599.22 children=[@8 ] (plan=PhysicalDistribute[839]@8 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[12], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[12]], exprIdToEquivalenceSet={12=0} ) ))
     id:832#8 cost=9908120.905744633 [1062533/0/5897058/] estRows=3,187,599.22 children=[@8 ] (plan=PhysicalDistribute[833]@8 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[12], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[12]], exprIdToEquivalenceSet={12=0} ) ))
+    id:838#8 cost=9908120.905744633 [1062533/0/5897058/] estRows=3,187,599.22 children=[@8 ] (plan=PhysicalDistribute[839]@8 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[12], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[12]], exprIdToEquivalenceSet={12=0} ) ))
   chosen expression id: 804
   chosen properties: DistributionSpecHash ( orderedShuffledColumns=[9], shuffleType=NATURAL, tableId=1743132380996, selectedIndexId=1743132380997, partitionIds=[1743132380995], equivalenceExprIds=[[9, 17]], exprIdToEquivalenceSet={9=0, 17=0} ) Order: ([])
   stats
     rows=3187599.2190063153
     tupleSize=111.0
     width=3
+    p_mfgr#2[VARCHAR(25)] -> unknown(2.0E8)
     p_partkey#0[INT] -> ndv=800000.0000, min=1.000000(1), max=200000000.000000(200000000), count=200000000.0000, numNulls=0.0000, avgSizeByte=4.000000
     ps_suppkey#17[INT] -> ndv=3187599.2190, min=1.000000(1), max=10000000.000000(10000000), count=800000000.0000, numNulls=0.0000, avgSizeByte=4.000000
     ps_supplycost#19[DECIMALV3(15, 2)] -> ndv=100279.0000, min=1.000000(1.00), max=1000.000000(1000.00), count=800000000.0000, numNulls=0.0000, avgSizeByte=8.000000
     s_acctbal#14[DECIMALV3(15, 2)] -> ndv=1109296.0000, min=-999.990000(-999.99), max=9999.990000(9999.99), count=10000000.0000, numNulls=0.0000, avgSizeByte=8.000000
+    s_address#11[VARCHAR(40)] -> unknown(1.0E7)
+    s_comment#15[VARCHAR(101)] -> unknown(1.0E7)
     s_name#10[VARCHAR(25)] -> ndv=3187599.2190, min=23491548849924452.000000(Supplier#000000001), max=23491548849924452.000000(Supplier#010000000), count=10000000.0000, numNulls=0.0000, avgSizeByte=16.000000
     s_nationkey#12[INT] -> ndv=25.0000, min=0.000000(0), max=24.000000(24), count=10000000.0000, numNulls=0.0000, avgSizeByte=4.000000
+    s_phone#13[VARCHAR(15)] -> unknown(1.0E7)
     s_suppkey#9[INT] -> ndv=3187599.2190, min=1.000000(1), max=10000000.000000(10000000), count=10000000.0000, numNulls=0.0000, avgSizeByte=4.000000
   lowest Plan(cost, properties, plan, childrenRequires)
 
@@ -418,22 +446,26 @@ Group[@9]
     id:898#9 cost=1.0 [1/0/0/] estRows=-1 children=[@28 ] (plan=PhysicalProject[899]@9 ( stats=null, projects=[p_partkey#0, p_mfgr#2, ps_supplycost#19, s_name#10, s_address#11, s_nationkey#12, s_phone#13, s_acctbal#14, s_comment#15] ))
   enforcers:
     id:826#9 cost=9270601.061943369 [1062533/0/5472045/] estRows=3,187,599.22 children=[@9 ] (plan=PhysicalDistribute[827]@9 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[12], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[12]], exprIdToEquivalenceSet={12=0} ) ))
-    id:1102#9 cost=9270601.061943369 [1062533/0/5472045/] estRows=-1 children=[@9 ] (plan=PhysicalDistribute[1103]@9 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[12], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[12]], exprIdToEquivalenceSet={12=0} ) ))
     id:1136#9 cost=9270601.061943369 [1062533/0/5472045/] estRows=-1 children=[@9 ] (plan=PhysicalDistribute[1137]@9 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[12], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[12]], exprIdToEquivalenceSet={12=0} ) ))
-    id:1105#9 cost=2.4624203966823786E7 [0/0/16416135/] estRows=3,187,599.22 children=[@9 ] (plan=PhysicalDistribute[1106]@9 ( stats=null, distributionSpec=DistributionSpecReplicated ))
     id:1151#9 cost=9270601.061943369 [1062533/0/5472045/] estRows=-1 children=[@9 ] (plan=PhysicalDistribute[1152]@9 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[12], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[12]], exprIdToEquivalenceSet={12=0} ) ))
+    id:1105#9 cost=2.4624203966823786E7 [0/0/16416135/] estRows=3,187,599.22 children=[@9 ] (plan=PhysicalDistribute[1106]@9 ( stats=null, distributionSpec=DistributionSpecReplicated ))
     id:1055#9 cost=9270601.061943369 [1062533/0/5472045/] estRows=-1 children=[@9 ] (plan=PhysicalDistribute[1056]@9 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[12], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[12]], exprIdToEquivalenceSet={12=0} ) ))
+    id:1102#9 cost=9270601.061943369 [1062533/0/5472045/] estRows=-1 children=[@9 ] (plan=PhysicalDistribute[1103]@9 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[12], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[12]], exprIdToEquivalenceSet={12=0} ) ))
   chosen expression id: 701
   chosen properties: DistributionSpecHash ( orderedShuffledColumns=[9], shuffleType=NATURAL, tableId=1743132380996, selectedIndexId=1743132380997, partitionIds=[1743132380995], equivalenceExprIds=[[9, 17]], exprIdToEquivalenceSet={9=0, 17=0} ) Order: ([])
   stats
     rows=3187599.2190063153
     tupleSize=103.0
     width=3
+    p_mfgr#2[VARCHAR(25)] -> unknown(2.0E8)
     p_partkey#0[INT] -> ndv=800000.0000, min=1.000000(1), max=200000000.000000(200000000), count=200000000.0000, numNulls=0.0000, avgSizeByte=4.000000
     ps_supplycost#19[DECIMALV3(15, 2)] -> ndv=100279.0000, min=1.000000(1.00), max=1000.000000(1000.00), count=800000000.0000, numNulls=0.0000, avgSizeByte=8.000000
     s_acctbal#14[DECIMALV3(15, 2)] -> ndv=1109296.0000, min=-999.990000(-999.99), max=9999.990000(9999.99), count=10000000.0000, numNulls=0.0000, avgSizeByte=8.000000
+    s_address#11[VARCHAR(40)] -> unknown(1.0E7)
+    s_comment#15[VARCHAR(101)] -> unknown(1.0E7)
     s_name#10[VARCHAR(25)] -> ndv=3177644.2950, min=23491548849924452.000000(Supplier#000000001), max=23491548849924452.000000(Supplier#010000000), count=10000000.0000, numNulls=0.0000, avgSizeByte=16.000000
     s_nationkey#12[INT] -> ndv=25.0000, min=0.000000(0), max=24.000000(24), count=10000000.0000, numNulls=0.0000, avgSizeByte=4.000000
+    s_phone#13[VARCHAR(15)] -> unknown(1.0E7)
   lowest Plan(cost, properties, plan, childrenRequires)
 
     1.8379630133248723E9 ANY
@@ -475,6 +507,7 @@ Group[@10]
     rows=25.0
     tupleSize=40.0
     width=1
+    n_comment#24[VARCHAR(152)] -> unknown(25.0)
     n_name#22[VARCHAR(25)] -> ndv=25.0000, min=18379742475602240.000000(ALGERIA), max=24287410113102156.000000(VIETNAM), count=25.0000, numNulls=0.0000, avgSizeByte=16.000000
     n_nationkey#21[INT] -> ndv=25.0000, min=0.000000(0), max=24.000000(24), count=25.0000, numNulls=0.0000, avgSizeByte=4.000000
     n_regionkey#23[INT] -> ndv=5.0000, min=0.000000(0), max=4.000000(4), count=25.0000, numNulls=0.0000, avgSizeByte=4.000000
@@ -501,11 +534,11 @@ Group[@11]
   physical expressions:
     id:1048#11 cost=1.0 [1/0/0/] estRows=-1 children=[@10 ] (plan=PhysicalProject[1049]@11 ( stats=null, projects=[n_nationkey#21, n_name#22, n_regionkey#23] ))
   enforcers:
-    id:1139#11 cost=23.333333333333336 [8/0/10/] estRows=-1 children=[@11 ] (plan=PhysicalDistribute[1140]@11 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[21], shuffleType=EXECUTION_BUCKETED, tableId=1743132381180, selectedIndexId=1743132381181, partitionIds=[1743132381179], equivalenceExprIds=[[21]], exprIdToEquivalenceSet={21=0} ) ))
     id:1148#11 cost=23.333333333333336 [8/0/10/] estRows=-1 children=[@11 ] (plan=PhysicalDistribute[1149]@11 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[21], shuffleType=EXECUTION_BUCKETED, tableId=1743132381180, selectedIndexId=1743132381181, partitionIds=[1743132381179], equivalenceExprIds=[[21]], exprIdToEquivalenceSet={21=0} ) ))
+    id:1139#11 cost=23.333333333333336 [8/0/10/] estRows=-1 children=[@11 ] (plan=PhysicalDistribute[1140]@11 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[21], shuffleType=EXECUTION_BUCKETED, tableId=1743132381180, selectedIndexId=1743132381181, partitionIds=[1743132381179], equivalenceExprIds=[[21]], exprIdToEquivalenceSet={21=0} ) ))
+    id:1061#11 cost=45.00000000000001 [0/0/30/] estRows=25 children=[@11 ] (plan=PhysicalDistribute[1062]@11 ( stats=null, distributionSpec=DistributionSpecReplicated ))
     id:1099#11 cost=23.333333333333336 [8/0/10/] estRows=-1 children=[@11 ] (plan=PhysicalDistribute[1100]@11 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[21], shuffleType=EXECUTION_BUCKETED, tableId=1743132381180, selectedIndexId=1743132381181, partitionIds=[1743132381179], equivalenceExprIds=[[21]], exprIdToEquivalenceSet={21=0} ) ))
     id:1058#11 cost=23.333333333333336 [8/0/10/] estRows=-1 children=[@11 ] (plan=PhysicalDistribute[1059]@11 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[21], shuffleType=EXECUTION_BUCKETED, tableId=1743132381180, selectedIndexId=1743132381181, partitionIds=[1743132381179], equivalenceExprIds=[[21]], exprIdToEquivalenceSet={21=0} ) ))
-    id:1061#11 cost=45.00000000000001 [0/0/30/] estRows=25 children=[@11 ] (plan=PhysicalDistribute[1062]@11 ( stats=null, distributionSpec=DistributionSpecReplicated ))
   chosen enforcer(id, requiredProperties):
       (0)1061,  REPLICATED
   chosen expression id: 1048
@@ -561,11 +594,15 @@ Group[@12]
     n_name#22[VARCHAR(25)] -> ndv=25.0000, min=18379742475602240.000000(ALGERIA), max=24287410113102156.000000(VIETNAM), count=25.0000, numNulls=0.0000, avgSizeByte=16.000000
     n_nationkey#21[INT] -> ndv=25.0000, min=0.000000(0), max=24.000000(24), count=25.0000, numNulls=0.0000, avgSizeByte=4.000000
     n_regionkey#23[INT] -> ndv=5.0000, min=0.000000(0), max=4.000000(4), count=25.0000, numNulls=0.0000, avgSizeByte=4.000000
+    p_mfgr#2[VARCHAR(25)] -> unknown(2.0E8)
     p_partkey#0[INT] -> ndv=800000.0000, min=1.000000(1), max=200000000.000000(200000000), count=200000000.0000, numNulls=0.0000, avgSizeByte=4.000000
     ps_supplycost#19[DECIMALV3(15, 2)] -> ndv=100279.0000, min=1.000000(1.00), max=1000.000000(1000.00), count=800000000.0000, numNulls=0.0000, avgSizeByte=8.000000
     s_acctbal#14[DECIMALV3(15, 2)] -> ndv=1109296.0000, min=-999.990000(-999.99), max=9999.990000(9999.99), count=10000000.0000, numNulls=0.0000, avgSizeByte=8.000000
+    s_address#11[VARCHAR(40)] -> unknown(1.0E7)
+    s_comment#15[VARCHAR(101)] -> unknown(1.0E7)
     s_name#10[VARCHAR(25)] -> ndv=3187599.2190, min=23491548849924452.000000(Supplier#000000001), max=23491548849924452.000000(Supplier#010000000), count=10000000.0000, numNulls=0.0000, avgSizeByte=16.000000
     s_nationkey#12[INT] -> ndv=25.0000, min=0.000000(0), max=24.000000(24), count=10000000.0000, numNulls=0.0000, avgSizeByte=4.000000
+    s_phone#13[VARCHAR(15)] -> unknown(1.0E7)
   lowest Plan(cost, properties, plan, childrenRequires)
 
     1.8443383327628849E9 ANY
@@ -606,10 +643,10 @@ Group[@13]
     id:690#13 cost=1.0 [1/0/0/] estRows=-1 children=[@12 ] (plan=PhysicalProject[691]@13 ( stats=null, projects=[p_partkey#0, p_mfgr#2, ps_supplycost#19, s_name#10, s_address#11, s_phone#13, s_acctbal#14, s_comment#15, n_name#22, n_regionkey#23] ))
   enforcers:
     id:1298#13 cost=1.0545640749545895E7 [1062533/0/6322071/] estRows=-1 children=[@13 ] (plan=PhysicalDistribute[1299]@13 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[23], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[23]], exprIdToEquivalenceSet={23=0} ) ))
-    id:1276#13 cost=2.844932302963137E7 [0/0/18966215/] estRows=3,187,599.22 children=[@13 ] (plan=PhysicalDistribute[1277]@13 ( stats=null, distributionSpec=DistributionSpecReplicated ))
     id:1238#13 cost=1.0545640749545895E7 [1062533/0/6322071/] estRows=-1 children=[@13 ] (plan=PhysicalDistribute[1239]@13 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[23], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[23]], exprIdToEquivalenceSet={23=0} ) ))
-    id:1313#13 cost=1.0545640749545895E7 [1062533/0/6322071/] estRows=-1 children=[@13 ] (plan=PhysicalDistribute[1314]@13 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[23], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[23]], exprIdToEquivalenceSet={23=0} ) ))
+    id:1276#13 cost=2.844932302963137E7 [0/0/18966215/] estRows=3,187,599.22 children=[@13 ] (plan=PhysicalDistribute[1277]@13 ( stats=null, distributionSpec=DistributionSpecReplicated ))
     id:1273#13 cost=1.0545640749545895E7 [1062533/0/6322071/] estRows=-1 children=[@13 ] (plan=PhysicalDistribute[1274]@13 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[23], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[23]], exprIdToEquivalenceSet={23=0} ) ))
+    id:1313#13 cost=1.0545640749545895E7 [1062533/0/6322071/] estRows=-1 children=[@13 ] (plan=PhysicalDistribute[1314]@13 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[23], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[23]], exprIdToEquivalenceSet={23=0} ) ))
     id:1133#13 cost=1.0545640749545895E7 [1062533/0/6322071/] estRows=3,187,599.22 children=[@13 ] (plan=PhysicalDistribute[1134]@13 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[23], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[23]], exprIdToEquivalenceSet={23=0} ) ))
   chosen expression id: 690
   chosen properties: DistributionSpecHash ( orderedShuffledColumns=[9], shuffleType=NATURAL, tableId=1743132380996, selectedIndexId=1743132380997, partitionIds=[1743132380995], equivalenceExprIds=[[9, 17]], exprIdToEquivalenceSet={9=0, 17=0} ) Order: ([])
@@ -619,10 +656,14 @@ Group[@13]
     width=4
     n_name#22[VARCHAR(25)] -> ndv=25.0000, min=18379742475602240.000000(ALGERIA), max=24287410113102156.000000(VIETNAM), count=25.0000, numNulls=0.0000, avgSizeByte=16.000000
     n_regionkey#23[INT] -> ndv=5.0000, min=0.000000(0), max=4.000000(4), count=25.0000, numNulls=0.0000, avgSizeByte=4.000000
+    p_mfgr#2[VARCHAR(25)] -> unknown(2.0E8)
     p_partkey#0[INT] -> ndv=800000.0000, min=1.000000(1), max=200000000.000000(200000000), count=200000000.0000, numNulls=0.0000, avgSizeByte=4.000000
     ps_supplycost#19[DECIMALV3(15, 2)] -> ndv=100279.0000, min=1.000000(1.00), max=1000.000000(1000.00), count=800000000.0000, numNulls=0.0000, avgSizeByte=8.000000
     s_acctbal#14[DECIMALV3(15, 2)] -> ndv=1109296.0000, min=-999.990000(-999.99), max=9999.990000(9999.99), count=10000000.0000, numNulls=0.0000, avgSizeByte=8.000000
+    s_address#11[VARCHAR(40)] -> unknown(1.0E7)
+    s_comment#15[VARCHAR(101)] -> unknown(1.0E7)
     s_name#10[VARCHAR(25)] -> ndv=3187599.2190, min=23491548849924452.000000(Supplier#000000001), max=23491548849924452.000000(Supplier#010000000), count=10000000.0000, numNulls=0.0000, avgSizeByte=16.000000
+    s_phone#13[VARCHAR(15)] -> unknown(1.0E7)
   lowest Plan(cost, properties, plan, childrenRequires)
 
     1.8443383337628849E9 ANY
@@ -660,6 +701,7 @@ Group[@14]
     rows=5.0
     tupleSize=36.0
     width=1
+    r_comment#27[VARCHAR(152)] -> unknown(5.0)
     r_name#26[VARCHAR(25)] -> ndv=5.0000, min=18373192716599552.000000(AFRICA), max=21754130759173408.000000(MIDDLE EAST), count=5.0000, numNulls=0.0000, avgSizeByte=16.000000
     r_regionkey#25[INT] -> ndv=5.0000, min=0.000000(0), max=4.000000(4), count=5.0000, numNulls=0.0000, avgSizeByte=4.000000
   lowest Plan(cost, properties, plan, childrenRequires)
@@ -691,6 +733,7 @@ Group[@15]
     rows=1.0
     tupleSize=26.0
     width=1
+    r_comment#27[VARCHAR(152)] -> unknown(5.0)
     r_name#26[VARCHAR(25)] -> ndv=1.0000, min=19515585399375104.000000(EUROPE), max=19515585399375104.000000(EUROPE), count=0.0000, numNulls=0.0000, avgSizeByte=6.000000
     r_regionkey#25[INT] -> ndv=1.0000, min=0.000000(0), max=4.000000(4), count=5.0000, numNulls=0.0000, avgSizeByte=4.000000
   lowest Plan(cost, properties, plan, childrenRequires)
@@ -716,11 +759,11 @@ Group[@16]
   physical expressions:
     id:1224#16 cost=1.0 [1/0/0/] estRows=-1 children=[@15 ] (plan=PhysicalProject[1225]@16 ( stats=null, projects=[r_regionkey#25] ))
   enforcers:
+    id:1270#16 cost=0.43333333333333335 [0/0/0/] estRows=-1 children=[@16 ] (plan=PhysicalDistribute[1271]@16 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[25], shuffleType=EXECUTION_BUCKETED, tableId=1743132381275, selectedIndexId=1743132381276, partitionIds=[1743132381274], equivalenceExprIds=[[25]], exprIdToEquivalenceSet={25=0} ) ))
+    id:1241#16 cost=0.43333333333333335 [0/0/0/] estRows=-1 children=[@16 ] (plan=PhysicalDistribute[1242]@16 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[25], shuffleType=EXECUTION_BUCKETED, tableId=1743132381275, selectedIndexId=1743132381276, partitionIds=[1743132381274], equivalenceExprIds=[[25]], exprIdToEquivalenceSet={25=0} ) ))
     id:1310#16 cost=0.43333333333333335 [0/0/0/] estRows=-1 children=[@16 ] (plan=PhysicalDistribute[1311]@16 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[25], shuffleType=EXECUTION_BUCKETED, tableId=1743132381275, selectedIndexId=1743132381276, partitionIds=[1743132381274], equivalenceExprIds=[[25]], exprIdToEquivalenceSet={25=0} ) ))
     id:1244#16 cost=0.30000000000000004 [0/0/0/] estRows=1 children=[@16 ] (plan=PhysicalDistribute[1245]@16 ( stats=null, distributionSpec=DistributionSpecReplicated ))
     id:1301#16 cost=0.43333333333333335 [0/0/0/] estRows=-1 children=[@16 ] (plan=PhysicalDistribute[1302]@16 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[25], shuffleType=EXECUTION_BUCKETED, tableId=1743132381275, selectedIndexId=1743132381276, partitionIds=[1743132381274], equivalenceExprIds=[[25]], exprIdToEquivalenceSet={25=0} ) ))
-    id:1270#16 cost=0.43333333333333335 [0/0/0/] estRows=-1 children=[@16 ] (plan=PhysicalDistribute[1271]@16 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[25], shuffleType=EXECUTION_BUCKETED, tableId=1743132381275, selectedIndexId=1743132381276, partitionIds=[1743132381274], equivalenceExprIds=[[25]], exprIdToEquivalenceSet={25=0} ) ))
-    id:1241#16 cost=0.43333333333333335 [0/0/0/] estRows=-1 children=[@16 ] (plan=PhysicalDistribute[1242]@16 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[25], shuffleType=EXECUTION_BUCKETED, tableId=1743132381275, selectedIndexId=1743132381276, partitionIds=[1743132381274], equivalenceExprIds=[[25]], exprIdToEquivalenceSet={25=0} ) ))
   chosen enforcer(id, requiredProperties):
       (0)1244,  REPLICATED
   chosen expression id: 1224
@@ -773,11 +816,15 @@ Group[@17]
     width=5
     n_name#22[VARCHAR(25)] -> ndv=25.0000, min=18379742475602240.000000(ALGERIA), max=24287410113102156.000000(VIETNAM), count=25.0000, numNulls=0.0000, avgSizeByte=16.000000
     n_regionkey#23[INT] -> ndv=1.0000, min=0.000000(0), max=4.000000(4), count=25.0000, numNulls=0.0000, avgSizeByte=4.000000
+    p_mfgr#2[VARCHAR(25)] -> unknown(2.0E8)
     p_partkey#0[INT] -> ndv=637519.8438, min=1.000000(1), max=200000000.000000(200000000), count=200000000.0000, numNulls=0.0000, avgSizeByte=4.000000
     ps_supplycost#19[DECIMALV3(15, 2)] -> ndv=100279.0000, min=1.000000(1.00), max=1000.000000(1000.00), count=800000000.0000, numNulls=0.0000, avgSizeByte=8.000000
     r_regionkey#25[INT] -> ndv=1.0000, min=0.000000(0), max=4.000000(4), count=5.0000, numNulls=0.0000, avgSizeByte=4.000000
     s_acctbal#14[DECIMALV3(15, 2)] -> ndv=637519.8438, min=-999.990000(-999.99), max=9999.990000(9999.99), count=10000000.0000, numNulls=0.0000, avgSizeByte=8.000000
+    s_address#11[VARCHAR(40)] -> unknown(1.0E7)
+    s_comment#15[VARCHAR(101)] -> unknown(1.0E7)
     s_name#10[VARCHAR(25)] -> ndv=637519.8438, min=23491548849924452.000000(Supplier#000000001), max=23491548849924452.000000(Supplier#010000000), count=10000000.0000, numNulls=0.0000, avgSizeByte=16.000000
+    s_phone#13[VARCHAR(15)] -> unknown(1.0E7)
   lowest Plan(cost, properties, plan, childrenRequires)
 
     1.8481634611261923E9 ANY
@@ -817,8 +864,8 @@ Group[@18]
   physical expressions:
     id:679#18 cost=1.0 [1/0/0/] estRows=-1 children=[@17 ] (plan=PhysicalProject[680]@18 ( stats=null, projects=[p_partkey#0, p_mfgr#2, ps_supplycost#19, s_name#10, s_address#11, s_phone#13, s_acctbal#14, s_comment#15, n_name#22] ))
   enforcers:
-    id:1292#18 cost=2045376.1655290527 [212506/0/1221913/] estRows=637,519.84 children=[@18 ] (plan=PhysicalDistribute[1293]@18 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[0], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[0]], exprIdToEquivalenceSet={0=0} ) ))
     id:1295#18 cost=2231319.453304421 [637519/637519/637519/] estRows=637,519.84 children=[@18 ] (plan=PhysicalQuickSort[1296]@18 ( stats=null, orderKeys=[p_partkey#0 asc], phase=LOCAL_SORT ))
+    id:1292#18 cost=2045376.1655290527 [212506/0/1221913/] estRows=637,519.84 children=[@18 ] (plan=PhysicalDistribute[1293]@18 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[0], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[0]], exprIdToEquivalenceSet={0=0} ) ))
   chosen enforcer(id, requiredProperties):
       (0)1295,  DistributionSpecHash ( orderedShuffledColumns=[0], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[0]], exprIdToEquivalenceSet={0=0} ) Order: ([p_partkey#0 asc])
       (1)1292,  DistributionSpecHash ( orderedShuffledColumns=[0], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[0]], exprIdToEquivalenceSet={0=0} ) Order: ([])
@@ -829,10 +876,14 @@ Group[@18]
     tupleSize=115.0
     width=5
     n_name#22[VARCHAR(25)] -> ndv=25.0000, min=18379742475602240.000000(ALGERIA), max=24287410113102156.000000(VIETNAM), count=25.0000, numNulls=0.0000, avgSizeByte=16.000000
+    p_mfgr#2[VARCHAR(25)] -> unknown(2.0E8)
     p_partkey#0[INT] -> ndv=637519.8438, min=1.000000(1), max=200000000.000000(200000000), count=200000000.0000, numNulls=0.0000, avgSizeByte=4.000000
     ps_supplycost#19[DECIMALV3(15, 2)] -> ndv=100279.0000, min=1.000000(1.00), max=1000.000000(1000.00), count=800000000.0000, numNulls=0.0000, avgSizeByte=8.000000
     s_acctbal#14[DECIMALV3(15, 2)] -> ndv=637519.8438, min=-999.990000(-999.99), max=9999.990000(9999.99), count=10000000.0000, numNulls=0.0000, avgSizeByte=8.000000
+    s_address#11[VARCHAR(40)] -> unknown(1.0E7)
+    s_comment#15[VARCHAR(101)] -> unknown(1.0E7)
     s_name#10[VARCHAR(25)] -> ndv=637519.8438, min=23491548849924452.000000(Supplier#000000001), max=23491548849924452.000000(Supplier#010000000), count=10000000.0000, numNulls=0.0000, avgSizeByte=16.000000
+    s_phone#13[VARCHAR(15)] -> unknown(1.0E7)
   lowest Plan(cost, properties, plan, childrenRequires)
 
     1.8481634621261923E9 ANY
@@ -872,10 +923,14 @@ Group[@19]
     width=1
     min(ps_supplycost) OVER(PARTITION BY p_partkey RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)#48[DECIMALV3(15, 2)] -> ndv=1.0000, min=1.000000(1.00), max=1000.000000(1000.00), count=0.0000, numNulls=0.0000, avgSizeByte=0.000000
     n_name#22[VARCHAR(25)] -> ndv=25.0000, min=18379742475602240.000000(ALGERIA), max=24287410113102156.000000(VIETNAM), count=25.0000, numNulls=0.0000, avgSizeByte=16.000000
+    p_mfgr#2[VARCHAR(25)] -> unknown(2.0E8)
     p_partkey#0[INT] -> ndv=637519.8438, min=1.000000(1), max=200000000.000000(200000000), count=200000000.0000, numNulls=0.0000, avgSizeByte=4.000000
     ps_supplycost#19[DECIMALV3(15, 2)] -> ndv=100279.0000, min=1.000000(1.00), max=1000.000000(1000.00), count=800000000.0000, numNulls=0.0000, avgSizeByte=8.000000
     s_acctbal#14[DECIMALV3(15, 2)] -> ndv=637519.8438, min=-999.990000(-999.99), max=9999.990000(9999.99), count=10000000.0000, numNulls=0.0000, avgSizeByte=8.000000
+    s_address#11[VARCHAR(40)] -> unknown(1.0E7)
+    s_comment#15[VARCHAR(101)] -> unknown(1.0E7)
     s_name#10[VARCHAR(25)] -> ndv=637519.8438, min=23491548849924452.000000(Supplier#000000001), max=23491548849924452.000000(Supplier#010000000), count=10000000.0000, numNulls=0.0000, avgSizeByte=16.000000
+    s_phone#13[VARCHAR(15)] -> unknown(1.0E7)
   lowest Plan(cost, properties, plan, childrenRequires)
 
     1.8524401577450259E9 ANY
@@ -903,10 +958,14 @@ Group[@20]
     width=1
     min(ps_supplycost) OVER(PARTITION BY p_partkey RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)#48[DECIMALV3(15, 2)] -> ndv=1.0000, min=1.000000(1.00), max=1000.000000(1000.00), count=800000000.0000, numNulls=0.0000, avgSizeByte=0.000000
     n_name#22[VARCHAR(25)] -> ndv=6.3575, min=18379742475602240.000000(ALGERIA), max=24287410113102156.000000(VIETNAM), count=25.0000, numNulls=0.0000, avgSizeByte=16.000000
+    p_mfgr#2[VARCHAR(25)] -> unknown(2.0E8)
     p_partkey#0[INT] -> ndv=6.3575, min=1.000000(1), max=200000000.000000(200000000), count=200000000.0000, numNulls=0.0000, avgSizeByte=4.000000
     ps_supplycost#19[DECIMALV3(15, 2)] -> ndv=1.0000, min=1.000000(1.00), max=1000.000000(1000.00), count=800000000.0000, numNulls=0.0000, avgSizeByte=8.000000
     s_acctbal#14[DECIMALV3(15, 2)] -> ndv=6.3575, min=-999.990000(-999.99), max=9999.990000(9999.99), count=10000000.0000, numNulls=0.0000, avgSizeByte=8.000000
+    s_address#11[VARCHAR(40)] -> unknown(1.0E7)
+    s_comment#15[VARCHAR(101)] -> unknown(1.0E7)
     s_name#10[VARCHAR(25)] -> ndv=6.3575, min=23491548849924452.000000(Supplier#000000001), max=23491548849924452.000000(Supplier#010000000), count=10000000.0000, numNulls=0.0000, avgSizeByte=16.000000
+    s_phone#13[VARCHAR(15)] -> unknown(1.0E7)
   lowest Plan(cost, properties, plan, childrenRequires)
 
     1.852440157745426E9 ANY
@@ -934,9 +993,13 @@ Group[@21]
     tupleSize=107.0
     width=1
     n_name#22[VARCHAR(25)] -> ndv=6.3575, min=18379742475602240.000000(ALGERIA), max=24287410113102156.000000(VIETNAM), count=25.0000, numNulls=0.0000, avgSizeByte=16.000000
+    p_mfgr#2[VARCHAR(25)] -> unknown(2.0E8)
     p_partkey#0[INT] -> ndv=6.3575, min=1.000000(1), max=200000000.000000(200000000), count=200000000.0000, numNulls=0.0000, avgSizeByte=4.000000
     s_acctbal#14[DECIMALV3(15, 2)] -> ndv=6.3575, min=-999.990000(-999.99), max=9999.990000(9999.99), count=10000000.0000, numNulls=0.0000, avgSizeByte=8.000000
+    s_address#11[VARCHAR(40)] -> unknown(1.0E7)
+    s_comment#15[VARCHAR(101)] -> unknown(1.0E7)
     s_name#10[VARCHAR(25)] -> ndv=6.3575, min=23491548849924452.000000(Supplier#000000001), max=23491548849924452.000000(Supplier#010000000), count=10000000.0000, numNulls=0.0000, avgSizeByte=16.000000
+    s_phone#13[VARCHAR(15)] -> unknown(1.0E7)
   lowest Plan(cost, properties, plan, childrenRequires)
 
     1.852440158745426E9 ANY
@@ -968,9 +1031,13 @@ Group[@22]
     tupleSize=107.0
     width=1
     n_name#22[VARCHAR(25)] -> ndv=6.3575, min=18379742475602240.000000(ALGERIA), max=24287410113102156.000000(VIETNAM), count=25.0000, numNulls=0.0000, avgSizeByte=16.000000
+    p_mfgr#2[VARCHAR(25)] -> unknown(2.0E8)
     p_partkey#0[INT] -> ndv=6.3575, min=1.000000(1), max=200000000.000000(200000000), count=200000000.0000, numNulls=0.0000, avgSizeByte=4.000000
     s_acctbal#14[DECIMALV3(15, 2)] -> ndv=6.3575, min=-999.990000(-999.99), max=9999.990000(9999.99), count=10000000.0000, numNulls=0.0000, avgSizeByte=8.000000
+    s_address#11[VARCHAR(40)] -> unknown(1.0E7)
+    s_comment#15[VARCHAR(101)] -> unknown(1.0E7)
     s_name#10[VARCHAR(25)] -> ndv=6.3575, min=23491548849924452.000000(Supplier#000000001), max=23491548849924452.000000(Supplier#010000000), count=10000000.0000, numNulls=0.0000, avgSizeByte=16.000000
+    s_phone#13[VARCHAR(15)] -> unknown(1.0E7)
   lowest Plan(cost, properties, plan, childrenRequires)
 
     1.8524402202538624E9 ANY
@@ -1001,9 +1068,13 @@ Group[@23]
     tupleSize=107.0
     width=1
     n_name#22[VARCHAR(25)] -> ndv=6.3575, min=18379742475602240.000000(ALGERIA), max=24287410113102156.000000(VIETNAM), count=25.0000, numNulls=0.0000, avgSizeByte=16.000000
+    p_mfgr#2[VARCHAR(25)] -> unknown(2.0E8)
     p_partkey#0[INT] -> ndv=6.3575, min=1.000000(1), max=200000000.000000(200000000), count=200000000.0000, numNulls=0.0000, avgSizeByte=4.000000
     s_acctbal#14[DECIMALV3(15, 2)] -> ndv=6.3575, min=-999.990000(-999.99), max=9999.990000(9999.99), count=10000000.0000, numNulls=0.0000, avgSizeByte=8.000000
+    s_address#11[VARCHAR(40)] -> unknown(1.0E7)
+    s_comment#15[VARCHAR(101)] -> unknown(1.0E7)
     s_name#10[VARCHAR(25)] -> ndv=6.3575, min=23491548849924452.000000(Supplier#000000001), max=23491548849924452.000000(Supplier#010000000), count=10000000.0000, numNulls=0.0000, avgSizeByte=16.000000
+    s_phone#13[VARCHAR(15)] -> unknown(1.0E7)
   lowest Plan(cost, properties, plan, childrenRequires)
 
     1.8524402202538624E9 ANY
@@ -1032,9 +1103,13 @@ Group[@24]
     tupleSize=107.0
     width=1
     n_name#22[VARCHAR(25)] -> ndv=6.3575, min=18379742475602240.000000(ALGERIA), max=24287410113102156.000000(VIETNAM), count=25.0000, numNulls=0.0000, avgSizeByte=16.000000
+    p_mfgr#2[VARCHAR(25)] -> unknown(2.0E8)
     p_partkey#0[INT] -> ndv=6.3575, min=1.000000(1), max=200000000.000000(200000000), count=200000000.0000, numNulls=0.0000, avgSizeByte=4.000000
     s_acctbal#14[DECIMALV3(15, 2)] -> ndv=6.3575, min=-999.990000(-999.99), max=9999.990000(9999.99), count=10000000.0000, numNulls=0.0000, avgSizeByte=8.000000
+    s_address#11[VARCHAR(40)] -> unknown(1.0E7)
+    s_comment#15[VARCHAR(101)] -> unknown(1.0E7)
     s_name#10[VARCHAR(25)] -> ndv=6.3575, min=23491548849924452.000000(Supplier#000000001), max=23491548849924452.000000(Supplier#010000000), count=10000000.0000, numNulls=0.0000, avgSizeByte=16.000000
+    s_phone#13[VARCHAR(15)] -> unknown(1.0E7)
   lowest Plan(cost, properties, plan, childrenRequires)
 
     1.85244018099654E9 ANY
@@ -1069,8 +1144,11 @@ Group[@25]
     ps_suppkey#17[INT] -> ndv=10000000.0000, min=1.000000(1), max=10000000.000000(10000000), count=800000000.0000, numNulls=0.0000, avgSizeByte=4.000000
     ps_supplycost#19[DECIMALV3(15, 2)] -> ndv=100279.0000, min=1.000000(1.00), max=1000.000000(1000.00), count=800000000.0000, numNulls=0.0000, avgSizeByte=8.000000
     s_acctbal#14[DECIMALV3(15, 2)] -> ndv=1109296.0000, min=-999.990000(-999.99), max=9999.990000(9999.99), count=10000000.0000, numNulls=0.0000, avgSizeByte=8.000000
+    s_address#11[VARCHAR(40)] -> unknown(1.0E7)
+    s_comment#15[VARCHAR(101)] -> unknown(1.0E7)
     s_name#10[VARCHAR(25)] -> ndv=9992858.0000, min=23491548849924452.000000(Supplier#000000001), max=23491548849924452.000000(Supplier#010000000), count=10000000.0000, numNulls=0.0000, avgSizeByte=16.000000
     s_nationkey#12[INT] -> ndv=25.0000, min=0.000000(0), max=24.000000(24), count=10000000.0000, numNulls=0.0000, avgSizeByte=4.000000
+    s_phone#13[VARCHAR(15)] -> unknown(1.0E7)
     s_suppkey#9[INT] -> ndv=10000000.0000, min=1.000000(1), max=10000000.000000(10000000), count=10000000.0000, numNulls=0.0000, avgSizeByte=4.000000
   lowest Plan(cost, properties, plan, childrenRequires)
 
@@ -1114,8 +1192,11 @@ Group[@26]
     ps_partkey#16[INT] -> ndv=200778064.0000, min=1.000000(1), max=200000000.000000(200000000), count=800000000.0000, numNulls=0.0000, avgSizeByte=4.000000
     ps_supplycost#19[DECIMALV3(15, 2)] -> ndv=100279.0000, min=1.000000(1.00), max=1000.000000(1000.00), count=800000000.0000, numNulls=0.0000, avgSizeByte=8.000000
     s_acctbal#14[DECIMALV3(15, 2)] -> ndv=1109296.0000, min=-999.990000(-999.99), max=9999.990000(9999.99), count=10000000.0000, numNulls=0.0000, avgSizeByte=8.000000
+    s_address#11[VARCHAR(40)] -> unknown(1.0E7)
+    s_comment#15[VARCHAR(101)] -> unknown(1.0E7)
     s_name#10[VARCHAR(25)] -> ndv=9992858.0000, min=23491548849924452.000000(Supplier#000000001), max=23491548849924452.000000(Supplier#010000000), count=10000000.0000, numNulls=0.0000, avgSizeByte=16.000000
     s_nationkey#12[INT] -> ndv=25.0000, min=0.000000(0), max=24.000000(24), count=10000000.0000, numNulls=0.0000, avgSizeByte=4.000000
+    s_phone#13[VARCHAR(15)] -> unknown(1.0E7)
   lowest Plan(cost, properties, plan, childrenRequires)
 
     2.5257413838838215E9 ANY
@@ -1144,6 +1225,7 @@ Group[@27]
     rows=800000.0
     tupleSize=20.0
     width=1
+    p_mfgr#2[VARCHAR(25)] -> unknown(2.0E8)
     p_partkey#0[INT] -> ndv=800000.0000, min=1.000000(1), max=200000000.000000(200000000), count=200000000.0000, numNulls=0.0000, avgSizeByte=4.000000
   lowest Plan(cost, properties, plan, childrenRequires)
 
@@ -1180,12 +1262,16 @@ Group[@28]
     rows=3187599.2190063153
     tupleSize=107.0
     width=3
+    p_mfgr#2[VARCHAR(25)] -> unknown(2.0E8)
     p_partkey#0[INT] -> ndv=800000.0000, min=1.000000(1), max=200000000.000000(200000000), count=200000000.0000, numNulls=0.0000, avgSizeByte=4.000000
     ps_partkey#16[INT] -> ndv=800000.0000, min=1.000000(1), max=200000000.000000(200000000), count=800000000.0000, numNulls=0.0000, avgSizeByte=4.000000
     ps_supplycost#19[DECIMALV3(15, 2)] -> ndv=100279.0000, min=1.000000(1.00), max=1000.000000(1000.00), count=800000000.0000, numNulls=0.0000, avgSizeByte=8.000000
     s_acctbal#14[DECIMALV3(15, 2)] -> ndv=1109296.0000, min=-999.990000(-999.99), max=9999.990000(9999.99), count=10000000.0000, numNulls=0.0000, avgSizeByte=8.000000
+    s_address#11[VARCHAR(40)] -> unknown(1.0E7)
+    s_comment#15[VARCHAR(101)] -> unknown(1.0E7)
     s_name#10[VARCHAR(25)] -> ndv=3177644.2950, min=23491548849924452.000000(Supplier#000000001), max=23491548849924452.000000(Supplier#010000000), count=10000000.0000, numNulls=0.0000, avgSizeByte=16.000000
     s_nationkey#12[INT] -> ndv=25.0000, min=0.000000(0), max=24.000000(24), count=10000000.0000, numNulls=0.0000, avgSizeByte=4.000000
+    s_phone#13[VARCHAR(15)] -> unknown(1.0E7)
   lowest Plan(cost, properties, plan, childrenRequires)
 
     3.528030572131626E9 ANY

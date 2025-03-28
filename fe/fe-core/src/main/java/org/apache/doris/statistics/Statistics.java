@@ -276,11 +276,11 @@ public class Statistics {
             }
         }).collect(Collectors.toList());
         for (Expression expr : sortedExprs) {
-            if (!expressionToColumnStats.get(expr).isUnKnown()) {
+            // if (!expressionToColumnStats.get(expr).isUnKnown()) {
                 builder.append(prefix).append(expr).append("[").append(expr.getDataType()).append("]")
                         .append(" -> ").append(expressionToColumnStats.get(expr))
                         .append("\n");
-            }
+            // }
         }
         return builder.toString();
     }
