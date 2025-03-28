@@ -41,7 +41,7 @@ sql 'set enable_runtime_filter_prune=false'
 
 
     qt_select """
-    explain shape plan
+    explain memo plan
     select 
         s_acctbal,
         s_name,
