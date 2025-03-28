@@ -41,7 +41,11 @@ public class OperativeColumnDerive extends DefaultPlanRewriter<DeriveContext> im
 
     @Override
     public Plan rewriteRoot(Plan plan, JobContext jobContext) {
-        return plan.accept(this, new DeriveContext());
+        DeriveContext deriveContext = new DeriveContext();
+        if (jobContext.getCascadesContext().getCurrentTree().isPresent()) {
+            deriveContext.addOperativeSlots(plan.getOutputSet());
+        }
+        return plan.accept(this, deriveContext);
     }
 
     @Override
