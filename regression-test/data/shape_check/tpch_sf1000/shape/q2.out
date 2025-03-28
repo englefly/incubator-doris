@@ -175,9 +175,9 @@ Group[@4]
   physical expressions:
     id:740#4 cost=1.0 [1/0/0/] estRows=-1 children=[@3 ] (plan=PhysicalProject[741]@4 ( stats=null, projects=[ps_partkey#16, ps_suppkey#17, ps_supplycost#19] ))
   enforcers:
-    id:948#4 cost=5.866666666666666E8 [266666666/0/213333333/] estRows=-1 children=[@4 ] (plan=PhysicalDistribute[949]@4 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[17], shuffleType=STORAGE_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[17]], exprIdToEquivalenceSet={17=0} ) ))
     id:918#4 cost=5.866666666666666E8 [266666666/0/213333333/] estRows=800,000,000 children=[@4 ] (plan=PhysicalDistribute[919]@4 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[17], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[17]], exprIdToEquivalenceSet={17=0} ) ))
     id:938#4 cost=5.866666666666666E8 [266666666/0/213333333/] estRows=-1 children=[@4 ] (plan=PhysicalDistribute[939]@4 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[17], shuffleType=STORAGE_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[17]], exprIdToEquivalenceSet={17=0} ) ))
+    id:948#4 cost=5.866666666666666E8 [266666666/0/213333333/] estRows=-1 children=[@4 ] (plan=PhysicalDistribute[949]@4 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[17], shuffleType=STORAGE_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[17]], exprIdToEquivalenceSet={17=0} ) ))
   chosen expression id: 740
   chosen properties: DistributionSpecHash ( orderedShuffledColumns=[16], shuffleType=NATURAL, tableId=1743132380532, selectedIndexId=1743132380533, partitionIds=[1743132380531], equivalenceExprIds=[[16]], exprIdToEquivalenceSet={16=0} ) Order: ([])
   stats
@@ -224,8 +224,8 @@ Group[@5]
     id:718#5 cost=1.6039875992190063E9 [803987599/800000000/0/] estRows=-1 children=[@2, @4 ] (plan=PhysicalHashJoin[719]@5 ( stats=null, type=INNER_JOIN, hashCondition=[(p_partkey#0 = ps_partkey#16)], otherCondition=[], markCondition=[] ))
     id:755#5 cost=8.079067828074594E8 [807106782/800000/0/] estRows=-1 children=[@4, @2 ] (plan=PhysicalHashJoin[756]@5 ( stats=null, type=INNER_JOIN, hashCondition=[(p_partkey#0 = ps_partkey#16)], otherCondition=[], markCondition=[] ))
   enforcers:
-    id:768#5 cost=3931372.3701077895 [1062533/0/1912559/] estRows=3,187,599.22 children=[@5 ] (plan=PhysicalDistribute[769]@5 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[17], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[17]], exprIdToEquivalenceSet={17=0} ) ))
     id:765#5 cost=3931372.3701077895 [1062533/0/1912559/] estRows=3,187,599.22 children=[@5 ] (plan=PhysicalDistribute[766]@5 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[17], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[17]], exprIdToEquivalenceSet={17=0} ) ))
+    id:768#5 cost=3931372.3701077895 [1062533/0/1912559/] estRows=3,187,599.22 children=[@5 ] (plan=PhysicalDistribute[769]@5 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[17], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[17]], exprIdToEquivalenceSet={17=0} ) ))
   chosen expression id: 755
   chosen properties: DistributionSpecHash ( orderedShuffledColumns=[16], shuffleType=NATURAL, tableId=1743132380532, selectedIndexId=1743132380533, partitionIds=[1743132380531], equivalenceExprIds=[[16, 0]], exprIdToEquivalenceSet={16=0, 0=0} ) Order: ([])
   stats
@@ -267,10 +267,10 @@ Group[@6]
   physical expressions:
     id:712#6 cost=1.0 [1/0/0/] estRows=-1 children=[@5 ] (plan=PhysicalProject[713]@6 ( stats=null, projects=[p_partkey#0, p_mfgr#2, ps_suppkey#17, ps_supplycost#19] ))
   enforcers:
-    id:835#6 cost=3612612.4482071586 [1062533/0/1700052/] estRows=-1 children=[@6 ] (plan=PhysicalDistribute[836]@6 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[17], shuffleType=STORAGE_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[17]], exprIdToEquivalenceSet={17=0} ) ))
-    id:762#6 cost=3612612.4482071586 [1062533/0/1700052/] estRows=3,187,599.22 children=[@6 ] (plan=PhysicalDistribute[763]@6 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[17], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[17]], exprIdToEquivalenceSet={17=0} ) ))
-    id:810#6 cost=7650238.125615159 [0/0/5100158/] estRows=3,187,599.22 children=[@6 ] (plan=PhysicalDistribute[811]@6 ( stats=null, distributionSpec=DistributionSpecReplicated ))
     id:807#6 cost=3612612.4482071586 [1062533/0/1700052/] estRows=-1 children=[@6 ] (plan=PhysicalDistribute[808]@6 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[17], shuffleType=STORAGE_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[17]], exprIdToEquivalenceSet={17=0} ) ))
+    id:810#6 cost=7650238.125615159 [0/0/5100158/] estRows=3,187,599.22 children=[@6 ] (plan=PhysicalDistribute[811]@6 ( stats=null, distributionSpec=DistributionSpecReplicated ))
+    id:762#6 cost=3612612.4482071586 [1062533/0/1700052/] estRows=3,187,599.22 children=[@6 ] (plan=PhysicalDistribute[763]@6 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[17], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[17]], exprIdToEquivalenceSet={17=0} ) ))
+    id:835#6 cost=3612612.4482071586 [1062533/0/1700052/] estRows=-1 children=[@6 ] (plan=PhysicalDistribute[836]@6 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[17], shuffleType=STORAGE_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[17]], exprIdToEquivalenceSet={17=0} ) ))
   chosen enforcer(id, requiredProperties):
       (0)807,  DistributionSpecHash ( orderedShuffledColumns=[17], shuffleType=STORAGE_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[17]], exprIdToEquivalenceSet={17=0} ) Order: ([])
   chosen expression id: 712
@@ -318,10 +318,10 @@ Group[@7]
     id:775#7 cost=1.0E7 [10000000/0/0/] estRows=-1 children=[ ] (plan=PhysicalOlapScan[supplier operativeSlots([s_suppkey#9, s_name#10, s_nationkey#12, s_acctbal#14])]@7 ( stats=null ))
   enforcers:
     id:781#7 cost=5.925E7 [0/0/39500000/] estRows=10,000,000 children=[@7 ] (plan=PhysicalDistribute[782]@7 ( stats=null, distributionSpec=DistributionSpecReplicated ))
+    id:942#7 cost=2.3083333333333332E7 [3333333/0/13166666/] estRows=-1 children=[@7 ] (plan=PhysicalDistribute[943]@7 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[9], shuffleType=EXECUTION_BUCKETED, tableId=1743132380996, selectedIndexId=1743132380997, partitionIds=[1743132380995], equivalenceExprIds=[[9]], exprIdToEquivalenceSet={9=0} ) ))
+    id:778#7 cost=2.3083333333333332E7 [3333333/0/13166666/] estRows=-1 children=[@7 ] (plan=PhysicalDistribute[779]@7 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[9], shuffleType=EXECUTION_BUCKETED, tableId=1743132380996, selectedIndexId=1743132380997, partitionIds=[1743132380995], equivalenceExprIds=[[9]], exprIdToEquivalenceSet={9=0} ) ))
     id:924#7 cost=2.3083333333333332E7 [3333333/0/13166666/] estRows=-1 children=[@7 ] (plan=PhysicalDistribute[925]@7 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[9], shuffleType=EXECUTION_BUCKETED, tableId=1743132380996, selectedIndexId=1743132380997, partitionIds=[1743132380995], equivalenceExprIds=[[9]], exprIdToEquivalenceSet={9=0} ) ))
     id:829#7 cost=2.3083333333333332E7 [3333333/0/13166666/] estRows=-1 children=[@7 ] (plan=PhysicalDistribute[830]@7 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[9], shuffleType=EXECUTION_BUCKETED, tableId=1743132380996, selectedIndexId=1743132380997, partitionIds=[1743132380995], equivalenceExprIds=[[9]], exprIdToEquivalenceSet={9=0} ) ))
-    id:778#7 cost=2.3083333333333332E7 [3333333/0/13166666/] estRows=-1 children=[@7 ] (plan=PhysicalDistribute[779]@7 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[9], shuffleType=EXECUTION_BUCKETED, tableId=1743132380996, selectedIndexId=1743132380997, partitionIds=[1743132380995], equivalenceExprIds=[[9]], exprIdToEquivalenceSet={9=0} ) ))
-    id:942#7 cost=2.3083333333333332E7 [3333333/0/13166666/] estRows=-1 children=[@7 ] (plan=PhysicalDistribute[943]@7 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[9], shuffleType=EXECUTION_BUCKETED, tableId=1743132380996, selectedIndexId=1743132380997, partitionIds=[1743132380995], equivalenceExprIds=[[9]], exprIdToEquivalenceSet={9=0} ) ))
   chosen expression id: 775
   chosen properties: DistributionSpecHash ( orderedShuffledColumns=[9], shuffleType=NATURAL, tableId=1743132380996, selectedIndexId=1743132380997, partitionIds=[1743132380995], equivalenceExprIds=[[9]], exprIdToEquivalenceSet={9=0} ) Order: ([])
   stats
@@ -365,8 +365,8 @@ Group[@8]
     id:707#8 cost=6.536499329367619E7 [55364993/10000000/0/] estRows=-1 children=[@6, @7 ] (plan=PhysicalHashJoin[708]@8 ( stats=null, type=INNER_JOIN, hashCondition=[(s_suppkey#9 = ps_suppkey#17)], otherCondition=[], markCondition=[] ))
     id:804#8 cost=3.199118162013191E7 [28803582/3187599/0/] estRows=-1 children=[@7, @6 ] (plan=PhysicalHashJoin[805]@8 ( stats=null, type=INNER_JOIN, hashCondition=[(s_suppkey#9 = ps_suppkey#17)], otherCondition=[], markCondition=[] ))
   enforcers:
-    id:832#8 cost=9908120.905744633 [1062533/0/5897058/] estRows=3,187,599.22 children=[@8 ] (plan=PhysicalDistribute[833]@8 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[12], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[12]], exprIdToEquivalenceSet={12=0} ) ))
     id:838#8 cost=9908120.905744633 [1062533/0/5897058/] estRows=3,187,599.22 children=[@8 ] (plan=PhysicalDistribute[839]@8 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[12], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[12]], exprIdToEquivalenceSet={12=0} ) ))
+    id:832#8 cost=9908120.905744633 [1062533/0/5897058/] estRows=3,187,599.22 children=[@8 ] (plan=PhysicalDistribute[833]@8 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[12], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[12]], exprIdToEquivalenceSet={12=0} ) ))
   chosen expression id: 804
   chosen properties: DistributionSpecHash ( orderedShuffledColumns=[9], shuffleType=NATURAL, tableId=1743132380996, selectedIndexId=1743132380997, partitionIds=[1743132380995], equivalenceExprIds=[[9, 17]], exprIdToEquivalenceSet={9=0, 17=0} ) Order: ([])
   stats
@@ -417,12 +417,12 @@ Group[@9]
     id:701#9 cost=1.0 [1/0/0/] estRows=-1 children=[@8 ] (plan=PhysicalProject[702]@9 ( stats=null, projects=[p_partkey#0, p_mfgr#2, ps_supplycost#19, s_name#10, s_address#11, s_nationkey#12, s_phone#13, s_acctbal#14, s_comment#15] ))
     id:898#9 cost=1.0 [1/0/0/] estRows=-1 children=[@28 ] (plan=PhysicalProject[899]@9 ( stats=null, projects=[p_partkey#0, p_mfgr#2, ps_supplycost#19, s_name#10, s_address#11, s_nationkey#12, s_phone#13, s_acctbal#14, s_comment#15] ))
   enforcers:
-    id:1151#9 cost=9270601.061943369 [1062533/0/5472045/] estRows=-1 children=[@9 ] (plan=PhysicalDistribute[1152]@9 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[12], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[12]], exprIdToEquivalenceSet={12=0} ) ))
     id:826#9 cost=9270601.061943369 [1062533/0/5472045/] estRows=3,187,599.22 children=[@9 ] (plan=PhysicalDistribute[827]@9 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[12], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[12]], exprIdToEquivalenceSet={12=0} ) ))
     id:1102#9 cost=9270601.061943369 [1062533/0/5472045/] estRows=-1 children=[@9 ] (plan=PhysicalDistribute[1103]@9 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[12], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[12]], exprIdToEquivalenceSet={12=0} ) ))
     id:1136#9 cost=9270601.061943369 [1062533/0/5472045/] estRows=-1 children=[@9 ] (plan=PhysicalDistribute[1137]@9 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[12], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[12]], exprIdToEquivalenceSet={12=0} ) ))
-    id:1055#9 cost=9270601.061943369 [1062533/0/5472045/] estRows=-1 children=[@9 ] (plan=PhysicalDistribute[1056]@9 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[12], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[12]], exprIdToEquivalenceSet={12=0} ) ))
     id:1105#9 cost=2.4624203966823786E7 [0/0/16416135/] estRows=3,187,599.22 children=[@9 ] (plan=PhysicalDistribute[1106]@9 ( stats=null, distributionSpec=DistributionSpecReplicated ))
+    id:1151#9 cost=9270601.061943369 [1062533/0/5472045/] estRows=-1 children=[@9 ] (plan=PhysicalDistribute[1152]@9 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[12], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[12]], exprIdToEquivalenceSet={12=0} ) ))
+    id:1055#9 cost=9270601.061943369 [1062533/0/5472045/] estRows=-1 children=[@9 ] (plan=PhysicalDistribute[1056]@9 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[12], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[12]], exprIdToEquivalenceSet={12=0} ) ))
   chosen expression id: 701
   chosen properties: DistributionSpecHash ( orderedShuffledColumns=[9], shuffleType=NATURAL, tableId=1743132380996, selectedIndexId=1743132380997, partitionIds=[1743132380995], equivalenceExprIds=[[9, 17]], exprIdToEquivalenceSet={9=0, 17=0} ) Order: ([])
   stats
@@ -501,11 +501,11 @@ Group[@11]
   physical expressions:
     id:1048#11 cost=1.0 [1/0/0/] estRows=-1 children=[@10 ] (plan=PhysicalProject[1049]@11 ( stats=null, projects=[n_nationkey#21, n_name#22, n_regionkey#23] ))
   enforcers:
-    id:1058#11 cost=23.333333333333336 [8/0/10/] estRows=-1 children=[@11 ] (plan=PhysicalDistribute[1059]@11 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[21], shuffleType=EXECUTION_BUCKETED, tableId=1743132381180, selectedIndexId=1743132381181, partitionIds=[1743132381179], equivalenceExprIds=[[21]], exprIdToEquivalenceSet={21=0} ) ))
-    id:1099#11 cost=23.333333333333336 [8/0/10/] estRows=-1 children=[@11 ] (plan=PhysicalDistribute[1100]@11 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[21], shuffleType=EXECUTION_BUCKETED, tableId=1743132381180, selectedIndexId=1743132381181, partitionIds=[1743132381179], equivalenceExprIds=[[21]], exprIdToEquivalenceSet={21=0} ) ))
     id:1139#11 cost=23.333333333333336 [8/0/10/] estRows=-1 children=[@11 ] (plan=PhysicalDistribute[1140]@11 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[21], shuffleType=EXECUTION_BUCKETED, tableId=1743132381180, selectedIndexId=1743132381181, partitionIds=[1743132381179], equivalenceExprIds=[[21]], exprIdToEquivalenceSet={21=0} ) ))
-    id:1061#11 cost=45.00000000000001 [0/0/30/] estRows=25 children=[@11 ] (plan=PhysicalDistribute[1062]@11 ( stats=null, distributionSpec=DistributionSpecReplicated ))
     id:1148#11 cost=23.333333333333336 [8/0/10/] estRows=-1 children=[@11 ] (plan=PhysicalDistribute[1149]@11 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[21], shuffleType=EXECUTION_BUCKETED, tableId=1743132381180, selectedIndexId=1743132381181, partitionIds=[1743132381179], equivalenceExprIds=[[21]], exprIdToEquivalenceSet={21=0} ) ))
+    id:1099#11 cost=23.333333333333336 [8/0/10/] estRows=-1 children=[@11 ] (plan=PhysicalDistribute[1100]@11 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[21], shuffleType=EXECUTION_BUCKETED, tableId=1743132381180, selectedIndexId=1743132381181, partitionIds=[1743132381179], equivalenceExprIds=[[21]], exprIdToEquivalenceSet={21=0} ) ))
+    id:1058#11 cost=23.333333333333336 [8/0/10/] estRows=-1 children=[@11 ] (plan=PhysicalDistribute[1059]@11 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[21], shuffleType=EXECUTION_BUCKETED, tableId=1743132381180, selectedIndexId=1743132381181, partitionIds=[1743132381179], equivalenceExprIds=[[21]], exprIdToEquivalenceSet={21=0} ) ))
+    id:1061#11 cost=45.00000000000001 [0/0/30/] estRows=25 children=[@11 ] (plan=PhysicalDistribute[1062]@11 ( stats=null, distributionSpec=DistributionSpecReplicated ))
   chosen enforcer(id, requiredProperties):
       (0)1061,  REPLICATED
   chosen expression id: 1048
@@ -550,8 +550,8 @@ Group[@12]
     id:696#12 cost=6375248.438012631 [6375223/25/0/] estRows=-1 children=[@9, @11 ] (plan=PhysicalHashJoin[697]@12 ( stats=null, type=INNER_JOIN, hashCondition=[(s_nationkey#12 = n_nationkey#21)], otherCondition=[], markCondition=[] ))
     id:1096#12 cost=2.1991206620131906E7 [18803607/3187599/0/] estRows=-1 children=[@11, @9 ] (plan=PhysicalHashJoin[1097]@12 ( stats=null, type=INNER_JOIN, hashCondition=[(s_nationkey#12 = n_nationkey#21)], otherCondition=[], markCondition=[] ))
   enforcers:
-    id:1145#12 cost=1.1183160593347158E7 [1062533/0/6747085/] estRows=3,187,599.22 children=[@12 ] (plan=PhysicalDistribute[1146]@12 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[23], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[23]], exprIdToEquivalenceSet={23=0} ) ))
     id:1142#12 cost=1.1183160593347158E7 [1062533/0/6747085/] estRows=3,187,599.22 children=[@12 ] (plan=PhysicalDistribute[1143]@12 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[23], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[23]], exprIdToEquivalenceSet={23=0} ) ))
+    id:1145#12 cost=1.1183160593347158E7 [1062533/0/6747085/] estRows=3,187,599.22 children=[@12 ] (plan=PhysicalDistribute[1146]@12 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[23], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[23]], exprIdToEquivalenceSet={23=0} ) ))
   chosen expression id: 696
   chosen properties: DistributionSpecHash ( orderedShuffledColumns=[9], shuffleType=NATURAL, tableId=1743132380996, selectedIndexId=1743132380997, partitionIds=[1743132380995], equivalenceExprIds=[[9, 17]], exprIdToEquivalenceSet={9=0, 17=0} ) Order: ([])
   stats
@@ -605,12 +605,12 @@ Group[@13]
   physical expressions:
     id:690#13 cost=1.0 [1/0/0/] estRows=-1 children=[@12 ] (plan=PhysicalProject[691]@13 ( stats=null, projects=[p_partkey#0, p_mfgr#2, ps_supplycost#19, s_name#10, s_address#11, s_phone#13, s_acctbal#14, s_comment#15, n_name#22, n_regionkey#23] ))
   enforcers:
-    id:1276#13 cost=2.844932302963137E7 [0/0/18966215/] estRows=3,187,599.22 children=[@13 ] (plan=PhysicalDistribute[1277]@13 ( stats=null, distributionSpec=DistributionSpecReplicated ))
-    id:1133#13 cost=1.0545640749545895E7 [1062533/0/6322071/] estRows=3,187,599.22 children=[@13 ] (plan=PhysicalDistribute[1134]@13 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[23], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[23]], exprIdToEquivalenceSet={23=0} ) ))
     id:1298#13 cost=1.0545640749545895E7 [1062533/0/6322071/] estRows=-1 children=[@13 ] (plan=PhysicalDistribute[1299]@13 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[23], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[23]], exprIdToEquivalenceSet={23=0} ) ))
-    id:1313#13 cost=1.0545640749545895E7 [1062533/0/6322071/] estRows=-1 children=[@13 ] (plan=PhysicalDistribute[1314]@13 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[23], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[23]], exprIdToEquivalenceSet={23=0} ) ))
+    id:1276#13 cost=2.844932302963137E7 [0/0/18966215/] estRows=3,187,599.22 children=[@13 ] (plan=PhysicalDistribute[1277]@13 ( stats=null, distributionSpec=DistributionSpecReplicated ))
     id:1238#13 cost=1.0545640749545895E7 [1062533/0/6322071/] estRows=-1 children=[@13 ] (plan=PhysicalDistribute[1239]@13 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[23], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[23]], exprIdToEquivalenceSet={23=0} ) ))
+    id:1313#13 cost=1.0545640749545895E7 [1062533/0/6322071/] estRows=-1 children=[@13 ] (plan=PhysicalDistribute[1314]@13 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[23], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[23]], exprIdToEquivalenceSet={23=0} ) ))
     id:1273#13 cost=1.0545640749545895E7 [1062533/0/6322071/] estRows=-1 children=[@13 ] (plan=PhysicalDistribute[1274]@13 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[23], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[23]], exprIdToEquivalenceSet={23=0} ) ))
+    id:1133#13 cost=1.0545640749545895E7 [1062533/0/6322071/] estRows=3,187,599.22 children=[@13 ] (plan=PhysicalDistribute[1134]@13 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[23], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[23]], exprIdToEquivalenceSet={23=0} ) ))
   chosen expression id: 690
   chosen properties: DistributionSpecHash ( orderedShuffledColumns=[9], shuffleType=NATURAL, tableId=1743132380996, selectedIndexId=1743132380997, partitionIds=[1743132380995], equivalenceExprIds=[[9, 17]], exprIdToEquivalenceSet={9=0, 17=0} ) Order: ([])
   stats
@@ -716,11 +716,11 @@ Group[@16]
   physical expressions:
     id:1224#16 cost=1.0 [1/0/0/] estRows=-1 children=[@15 ] (plan=PhysicalProject[1225]@16 ( stats=null, projects=[r_regionkey#25] ))
   enforcers:
+    id:1310#16 cost=0.43333333333333335 [0/0/0/] estRows=-1 children=[@16 ] (plan=PhysicalDistribute[1311]@16 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[25], shuffleType=EXECUTION_BUCKETED, tableId=1743132381275, selectedIndexId=1743132381276, partitionIds=[1743132381274], equivalenceExprIds=[[25]], exprIdToEquivalenceSet={25=0} ) ))
     id:1244#16 cost=0.30000000000000004 [0/0/0/] estRows=1 children=[@16 ] (plan=PhysicalDistribute[1245]@16 ( stats=null, distributionSpec=DistributionSpecReplicated ))
+    id:1301#16 cost=0.43333333333333335 [0/0/0/] estRows=-1 children=[@16 ] (plan=PhysicalDistribute[1302]@16 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[25], shuffleType=EXECUTION_BUCKETED, tableId=1743132381275, selectedIndexId=1743132381276, partitionIds=[1743132381274], equivalenceExprIds=[[25]], exprIdToEquivalenceSet={25=0} ) ))
     id:1270#16 cost=0.43333333333333335 [0/0/0/] estRows=-1 children=[@16 ] (plan=PhysicalDistribute[1271]@16 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[25], shuffleType=EXECUTION_BUCKETED, tableId=1743132381275, selectedIndexId=1743132381276, partitionIds=[1743132381274], equivalenceExprIds=[[25]], exprIdToEquivalenceSet={25=0} ) ))
     id:1241#16 cost=0.43333333333333335 [0/0/0/] estRows=-1 children=[@16 ] (plan=PhysicalDistribute[1242]@16 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[25], shuffleType=EXECUTION_BUCKETED, tableId=1743132381275, selectedIndexId=1743132381276, partitionIds=[1743132381274], equivalenceExprIds=[[25]], exprIdToEquivalenceSet={25=0} ) ))
-    id:1310#16 cost=0.43333333333333335 [0/0/0/] estRows=-1 children=[@16 ] (plan=PhysicalDistribute[1311]@16 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[25], shuffleType=EXECUTION_BUCKETED, tableId=1743132381275, selectedIndexId=1743132381276, partitionIds=[1743132381274], equivalenceExprIds=[[25]], exprIdToEquivalenceSet={25=0} ) ))
-    id:1301#16 cost=0.43333333333333335 [0/0/0/] estRows=-1 children=[@16 ] (plan=PhysicalDistribute[1302]@16 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[25], shuffleType=EXECUTION_BUCKETED, tableId=1743132381275, selectedIndexId=1743132381276, partitionIds=[1743132381274], equivalenceExprIds=[[25]], exprIdToEquivalenceSet={25=0} ) ))
   chosen enforcer(id, requiredProperties):
       (0)1244,  REPLICATED
   chosen expression id: 1224
@@ -763,8 +763,8 @@ Group[@17]
     id:685#17 cost=3825121.0628075786 [3825120/1/0/] estRows=-1 children=[@13, @16 ] (plan=PhysicalHashJoin[686]@17 ( stats=null, type=INNER_JOIN, hashCondition=[(n_regionkey#23 = r_regionkey#25)], otherCondition=[], markCondition=[] ))
     id:1267#17 cost=1.9441103244926855E7 [16253504/3187599/0/] estRows=-1 children=[@16, @13 ] (plan=PhysicalHashJoin[1268]@17 ( stats=null, type=INNER_JOIN, hashCondition=[(n_regionkey#23 = r_regionkey#25)], otherCondition=[], markCondition=[] ))
   enforcers:
-    id:1304#17 cost=2172880.134289305 [212506/0/1306915/] estRows=637,519.84 children=[@17 ] (plan=PhysicalDistribute[1305]@17 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[0], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[0]], exprIdToEquivalenceSet={0=0} ) ))
     id:1307#17 cost=2172880.134289305 [212506/0/1306915/] estRows=637,519.84 children=[@17 ] (plan=PhysicalDistribute[1308]@17 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[0], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[0]], exprIdToEquivalenceSet={0=0} ) ))
+    id:1304#17 cost=2172880.134289305 [212506/0/1306915/] estRows=637,519.84 children=[@17 ] (plan=PhysicalDistribute[1305]@17 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[0], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[0]], exprIdToEquivalenceSet={0=0} ) ))
   chosen expression id: 685
   chosen properties: DistributionSpecHash ( orderedShuffledColumns=[9], shuffleType=NATURAL, tableId=1743132380996, selectedIndexId=1743132380997, partitionIds=[1743132380995], equivalenceExprIds=[[9, 17]], exprIdToEquivalenceSet={9=0, 17=0} ) Order: ([])
   stats
@@ -817,8 +817,8 @@ Group[@18]
   physical expressions:
     id:679#18 cost=1.0 [1/0/0/] estRows=-1 children=[@17 ] (plan=PhysicalProject[680]@18 ( stats=null, projects=[p_partkey#0, p_mfgr#2, ps_supplycost#19, s_name#10, s_address#11, s_phone#13, s_acctbal#14, s_comment#15, n_name#22] ))
   enforcers:
-    id:1295#18 cost=2231319.453304421 [637519/637519/637519/] estRows=637,519.84 children=[@18 ] (plan=PhysicalQuickSort[1296]@18 ( stats=null, orderKeys=[p_partkey#0 asc], phase=LOCAL_SORT ))
     id:1292#18 cost=2045376.1655290527 [212506/0/1221913/] estRows=637,519.84 children=[@18 ] (plan=PhysicalDistribute[1293]@18 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[0], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[0]], exprIdToEquivalenceSet={0=0} ) ))
+    id:1295#18 cost=2231319.453304421 [637519/637519/637519/] estRows=637,519.84 children=[@18 ] (plan=PhysicalQuickSort[1296]@18 ( stats=null, orderKeys=[p_partkey#0 asc], phase=LOCAL_SORT ))
   chosen enforcer(id, requiredProperties):
       (0)1295,  DistributionSpecHash ( orderedShuffledColumns=[0], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[0]], exprIdToEquivalenceSet={0=0} ) Order: ([p_partkey#0 asc])
       (1)1292,  DistributionSpecHash ( orderedShuffledColumns=[0], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[0]], exprIdToEquivalenceSet={0=0} ) Order: ([])
@@ -1174,8 +1174,8 @@ Group[@28]
     id:904#28 cost=8.054083698356175E8 [804608369/800000/0/] estRows=-1 children=[@26, @27 ] (plan=PhysicalHashJoin[905]@28 ( stats=null, type=INNER_JOIN, hashCondition=[(p_partkey#0 = ps_partkey#16)], otherCondition=[], markCondition=[] ))
     id:989#28 cost=1.5989907732753227E9 [801489186/797501587/0/] estRows=-1 children=[@27, @26 ] (plan=PhysicalHashJoin[990]@28 ( stats=null, type=INNER_JOIN, hashCondition=[(p_partkey#0 = ps_partkey#16)], otherCondition=[], markCondition=[] ))
   enforcers:
-    id:1005#28 cost=9589360.983844 [1062533/0/5684551/] estRows=3,187,599.22 children=[@28 ] (plan=PhysicalDistribute[1006]@28 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[12], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[12]], exprIdToEquivalenceSet={12=0} ) ))
     id:1008#28 cost=9589360.983844 [1062533/0/5684551/] estRows=3,187,599.22 children=[@28 ] (plan=PhysicalDistribute[1009]@28 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[12], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[12]], exprIdToEquivalenceSet={12=0} ) ))
+    id:1005#28 cost=9589360.983844 [1062533/0/5684551/] estRows=3,187,599.22 children=[@28 ] (plan=PhysicalDistribute[1006]@28 ( stats=null, distributionSpec=DistributionSpecHash ( orderedShuffledColumns=[12], shuffleType=EXECUTION_BUCKETED, tableId=-1, selectedIndexId=-1, partitionIds=[], equivalenceExprIds=[[12]], exprIdToEquivalenceSet={12=0} ) ))
   stats
     rows=3187599.2190063153
     tupleSize=107.0
