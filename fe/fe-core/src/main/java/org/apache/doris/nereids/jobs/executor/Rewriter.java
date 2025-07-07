@@ -661,8 +661,6 @@ public class Rewriter extends AbstractBatchJobExecutor {
                                         () -> new RewriteCteChildren(afterPushDownJobs, runCboRules)
                                 )
                         ),
-                        topic("stats related jobs",
-                                custom(RuleType.STATS_DERIVER, StatsDerive::new)),
                         topic("whole plan check",
                                 custom(RuleType.ADJUST_NULLABLE, AdjustNullable::new)
                         ),
