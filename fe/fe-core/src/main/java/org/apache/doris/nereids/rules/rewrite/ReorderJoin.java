@@ -27,6 +27,7 @@ import org.apache.doris.nereids.trees.expressions.Expression;
 import org.apache.doris.nereids.trees.plans.DistributeType;
 import org.apache.doris.nereids.trees.plans.JoinType;
 import org.apache.doris.nereids.trees.plans.Plan;
+import org.apache.doris.nereids.trees.plans.logical.AbstractLogicalPlan;
 import org.apache.doris.nereids.trees.plans.logical.LogicalFilter;
 import org.apache.doris.nereids.trees.plans.logical.LogicalJoin;
 import org.apache.doris.nereids.util.ExpressionUtils;
@@ -40,7 +41,10 @@ import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.apache.doris.statistics.Statistics;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -223,17 +227,23 @@ public class ReorderJoin extends OneRewriteRuleFactory {
             return PlanUtils.filterOrSelf(ImmutableSet.copyOf(multiJoin.getJoinFilter()), multiJoin.child(0));
         }
 
-        Builder<Plan> builder = ImmutableList.builder();
+        List<Plan> plans = new ArrayList<>();
         // recursively handle multiJoin children.
         for (Plan child : multiJoin.children()) {
             if (child instanceof MultiJoin) {
                 MultiJoin childMultiJoin = (MultiJoin) child;
-                builder.add(multiJoinToJoin(childMultiJoin, planToHintType));
+                plans.add(multiJoinToJoin(childMultiJoin, planToHintType));
             } else {
-                builder.add(child);
+                plans.add(child);
             }
         }
-        MultiJoin multiJoinHandleChildren = multiJoin.withChildren(builder.build());
+        StatsDerive derive = new StatsDerive();
+        plans.sort((plan1, plan2) -> Double.compare(
+                plan2.accept(derive, null).getRowCount(),
+                plan1.accept(derive, null).getRowCount()
+        ));
+
+        MultiJoin multiJoinHandleChildren = multiJoin.withChildren(plans);
 
         if (!multiJoinHandleChildren.getJoinType().isInnerOrCrossJoin()) {
             List<Expression> remainingFilter;
