@@ -90,12 +90,6 @@ public class PlanPostProcessors {
                         .toUpperCase().equals(TRuntimeFilterMode.OFF.name())) {
             builder.add(new RegisterParent());
             builder.add(new org.apache.doris.nereids.processor.post.RuntimeFilterGenerator());
-            if (ConnectContext.get().getSessionVariable().enableRuntimeFilterPrune) {
-                builder.add(new RuntimeFilterPruner());
-                if (ConnectContext.get().getSessionVariable().runtimeFilterPruneForExternal) {
-                    builder.add(new RuntimeFilterPrunerForExternalTable());
-                }
-            }
             builder.add(new RuntimeFilterV2Generator());
         }
         builder.add(new Validator());

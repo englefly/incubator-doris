@@ -1860,7 +1860,8 @@ public class SessionVariable implements Serializable, Writable {
     @VariableMgr.VarAttr(name = BROADCAST_HASHTABLE_MEM_LIMIT_PERCENTAGE, needForward = true)
     private double broadcastHashtableMemLimitPercentage = 0.2;
 
-    @VariableMgr.VarAttr(name = ENABLE_RUNTIME_FILTER_PRUNE, needForward = true, fuzzy = true)
+    @VariableMgr.VarAttr(name = ENABLE_RUNTIME_FILTER_PRUNE, needForward = true, fuzzy = false,
+            varType = VariableAnnotation.DEPRECATED)
     public boolean enableRuntimeFilterPrune = true;
 
     @VariableMgr.VarAttr(name = ENABLE_RUNTIME_FILTER_PARTITION_PRUNE, needForward = true, fuzzy = true)
