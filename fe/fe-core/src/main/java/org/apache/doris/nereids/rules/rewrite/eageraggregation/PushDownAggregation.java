@@ -35,20 +35,19 @@
 package org.apache.doris.nereids.rules.rewrite.eageraggregation;
 
 import org.apache.doris.nereids.jobs.JobContext;
+import org.apache.doris.nereids.rules.analysis.CheckAfterRewrite;
 import org.apache.doris.nereids.rules.analysis.NormalizeAggregate;
 import org.apache.doris.nereids.rules.rewrite.AdjustNullable;
-import org.apache.doris.nereids.trees.expressions.Alias;
-import org.apache.doris.nereids.trees.expressions.Cast;
-import org.apache.doris.nereids.trees.expressions.Divide;
 import org.apache.doris.nereids.trees.expressions.Expression;
 import org.apache.doris.nereids.trees.expressions.NamedExpression;
+import org.apache.doris.nereids.trees.expressions.Slot;
 import org.apache.doris.nereids.trees.expressions.SlotReference;
 import org.apache.doris.nereids.trees.expressions.functions.agg.AggregateFunction;
-import org.apache.doris.nereids.trees.expressions.functions.agg.Avg;
-import org.apache.doris.nereids.trees.expressions.functions.agg.Count;
 import org.apache.doris.nereids.trees.expressions.functions.agg.Max;
 import org.apache.doris.nereids.trees.expressions.functions.agg.Min;
 import org.apache.doris.nereids.trees.expressions.functions.agg.Sum;
+import org.apache.doris.nereids.trees.expressions.functions.scalar.If;
+import org.apache.doris.nereids.trees.expressions.literal.NullLiteral;
 import org.apache.doris.nereids.trees.plans.Plan;
 import org.apache.doris.nereids.trees.plans.logical.LogicalAggregate;
 import org.apache.doris.nereids.trees.plans.logical.LogicalFilter;
@@ -56,11 +55,10 @@ import org.apache.doris.nereids.trees.plans.logical.LogicalJoin;
 import org.apache.doris.nereids.trees.plans.logical.LogicalPlan;
 import org.apache.doris.nereids.trees.plans.logical.LogicalProject;
 import org.apache.doris.nereids.trees.plans.logical.LogicalRelation;
+import org.apache.doris.nereids.trees.plans.logical.LogicalUnion;
 import org.apache.doris.nereids.trees.plans.visitor.CustomRewriter;
 import org.apache.doris.nereids.trees.plans.visitor.DefaultPlanRewriter;
-import org.apache.doris.nereids.types.DataType;
 import org.apache.doris.nereids.util.ExpressionUtils;
-import org.apache.doris.qe.ConnectContext;
 import org.apache.doris.qe.SessionVariable;
 
 import com.google.common.collect.Sets;
@@ -73,6 +71,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * push down aggregation
@@ -84,20 +83,21 @@ public class PushDownAggregation extends DefaultPlanRewriter<JobContext> impleme
 
     private final Set<Class> pushDownAggFunctionSet = Sets.newHashSet(
             Sum.class,
-            Count.class,
-            Avg.class,
             Max.class,
             Min.class);
 
     private final Set<Class> acceptNodeType = Sets.newHashSet(
+            LogicalUnion.class,
             LogicalProject.class,
             LogicalFilter.class,
             LogicalRelation.class,
             LogicalJoin.class);
 
+    private CheckAfterRewrite checker = new CheckAfterRewrite();
+
     @Override
     public Plan rewriteRoot(Plan plan, JobContext jobContext) {
-        int mode = ConnectContext.get().getSessionVariable().eagerAggregationMode;
+        int mode = SessionVariable.getEagerAggregationMode();
         if (mode < 0) {
             return plan;
         } else {
@@ -109,7 +109,6 @@ public class PushDownAggregation extends DefaultPlanRewriter<JobContext> impleme
     public Plan visitLogicalAggregate(LogicalAggregate<? extends Plan> agg, JobContext context) {
         Plan newChild = agg.child().accept(this, context);
         if (newChild != agg.child()) {
-            // TODO : push down upper aggregations
             return agg.withChildren(newChild);
         }
 
@@ -117,40 +116,7 @@ public class PushDownAggregation extends DefaultPlanRewriter<JobContext> impleme
             return agg;
         }
 
-        List<AggregateFunction> aggFunctions = new ArrayList<>();
-
-        Map<Avg, Divide> avgToSumCountMap = new HashMap<>();
-        for (AggregateFunction aggFunction : agg.getAggregateFunctions()) {
-            if (pushDownAggFunctionSet.contains(aggFunction.getClass())
-                    && !aggFunction.isDistinct()
-                    && (!(aggFunction instanceof Count) || (!((Count) aggFunction).isCountStar()))) {
-                if (aggFunction instanceof Avg) {
-                    DataType targetType = aggFunction.getDataType();
-                    Sum sum = new Sum(aggFunction.child(0));
-                    Count count = new Count(aggFunction.child(0));
-                    if (!aggFunctions.contains(sum)) {
-                        aggFunctions.add(sum);
-                    }
-                    if (!aggFunctions.contains(count)) {
-                        aggFunctions.add(count);
-                    }
-                    Expression castSum = targetType.equals(sum.getDataType()) ? sum : new Cast(sum, targetType);
-                    Expression castCount = targetType.equals(count.getDataType()) ? count : new Cast(count, targetType);
-                    avgToSumCountMap.put((Avg) aggFunction,
-                            new Divide(castSum, castCount));
-                } else {
-                    aggFunctions.add(aggFunction);
-                }
-            } else {
-                return agg;
-            }
-        }
-
-        if (!checkSubTreePattern(agg.child())) {
-            return agg;
-        }
-
-        List<NamedExpression> groupKeys = new ArrayList<>();
+        List<SlotReference> groupKeys = new ArrayList<>();
         for (Expression groupKey : agg.getGroupByExpressions()) {
             if (groupKey instanceof SlotReference) {
                 groupKeys.add((SlotReference) groupKey);
@@ -162,6 +128,36 @@ public class PushDownAggregation extends DefaultPlanRewriter<JobContext> impleme
                     return agg;
                 }
             }
+        }
+
+        List<AggregateFunction> aggFunctions = new ArrayList<>();
+
+        for (AggregateFunction aggFunction : agg.getAggregateFunctions()) {
+            if (pushDownAggFunctionSet.contains(aggFunction.getClass())
+                    && !aggFunction.isDistinct()) {
+                if (aggFunction instanceof Sum && ((Sum) aggFunction).child() instanceof If) {
+                    If body = (If) ((Sum) aggFunction).child();
+                    aggFunctions.add(new Sum(body.getTrueValue()));
+                    if (!(body.getFalseValue() instanceof NullLiteral)) {
+                        aggFunctions.add(new Sum(body.getFalseValue()));
+                    }
+                    groupKeys.addAll(body.getCondition().getInputSlots()
+                            .stream().map(slot -> (SlotReference) slot).collect(Collectors.toList()));
+                } else {
+                    aggFunctions.add(aggFunction);
+                }
+            } else {
+                return agg;
+            }
+        }
+        aggFunctions = aggFunctions.stream().distinct().collect(Collectors.toList());
+        groupKeys = groupKeys.stream().distinct().collect(Collectors.toList());
+        if (!checkSubTreePattern(agg.child())) {
+            return agg;
+        }
+
+        if (!checkSubTreePattern(agg.child())) {
+            return agg;
         }
 
         PushDownAggContext pushDownContext = new PushDownAggContext(new ArrayList<>(aggFunctions),
@@ -180,26 +176,23 @@ public class PushDownAggregation extends DefaultPlanRewriter<JobContext> impleme
                 //                                 ->scan(T1[A...])
                 //                       ->scan(T2)
                 List<NamedExpression> newOutputExpressions = new ArrayList<>();
+                Map<Expression, Slot> replaceMap = new HashMap<>();
+                for (Expression x : pushDownContext.getAliasMap().keySet()) {
+                    replaceMap.put(x.child(0), pushDownContext.getAliasMap().get(x).toSlot());
+                }
+
                 for (NamedExpression ne : agg.getOutputExpressions()) {
                     if (ne instanceof SlotReference) {
                         newOutputExpressions.add(ne);
                     } else {
-                        Expression rewriteAvgExpr = ExpressionUtils.replace(ne, avgToSumCountMap);
-                        NamedExpression replaceAliasExpr = (NamedExpression) rewriteAvgExpr
-                                .rewriteDownShortCircuit(e -> {
-                                    Alias alias = pushDownContext.getAliasMap().get(e);
-                                    if (alias != null) {
-                                        AggregateFunction aggFunction = (AggregateFunction) e;
-                                        return aggFunction.withChildren(alias.toSlot());
-                                    } else {
-                                        return e;
-                                    }
-                                });
+                        NamedExpression replaceAliasExpr = (NamedExpression) ExpressionUtils.replace(ne, replaceMap);
+                        replaceAliasExpr = (NamedExpression) ExpressionUtils.rebuildSignature(replaceAliasExpr);
                         newOutputExpressions.add(replaceAliasExpr);
                     }
                 }
                 LogicalAggregate<Plan> eagerAgg =
                         agg.withAggOutputChild(newOutputExpressions, child);
+                checker.checkTreeAllSlotReferenceFromChildren(eagerAgg);
                 NormalizeAggregate normalizeAggregate = new NormalizeAggregate();
                 LogicalPlan normalized = normalizeAggregate.normalizeAgg(eagerAgg, Optional.empty(),
                         context.getCascadesContext());
@@ -208,6 +201,9 @@ public class PushDownAggregation extends DefaultPlanRewriter<JobContext> impleme
             }
         } catch (RuntimeException e) {
             LOG.info("PushDownAggregation failed: " + e.getMessage() + "\n" + agg.treeString());
+            if (SessionVariable.isFeDebug()) {
+                throw e;
+            }
         }
         return agg;
     }

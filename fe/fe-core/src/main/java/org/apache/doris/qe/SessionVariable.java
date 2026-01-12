@@ -2150,7 +2150,35 @@ public class SessionVariable implements Serializable, Writable {
     @VariableMgr.VarAttr(name = DPHYPER_LIMIT)
     public int dphyperLimit = 1000;
 
+    @VariableMgr.VarAttr(name = "eager_aggregation_mode", needForward = true,
+            description = {"0: 根据统计信息决定是使用eager aggregation，"
+                    + "1: 强制使用 eager aggregation，"
+                    + "-1: 禁止使用 eager aggregation",
+                    "0: Determine eager aggregation by statistics, "
+                            + "1: force eager aggregation, "
+                            + "-1: Prohibit eager aggregation "}
+    )
+    private int eagerAggregationMode = 0;
 
+    public static int getEagerAggregationMode() {
+        if (ConnectContext.get() != null) {
+            return ConnectContext.get().getSessionVariable().eagerAggregationMode;
+        } else {
+            return VariableMgr.getDefaultSessionVariable().eagerAggregationMode;
+        }
+    }
+
+    @VariableMgr.VarAttr(name = "eager_aggregation_on_join", needForward = true)
+    public boolean eagerAggregationOnJoin = false;
+
+    public static boolean isEagerAggregationOnJoin() {
+        if (ConnectContext.get() != null) {
+            return ConnectContext.get().getSessionVariable().eagerAggregationOnJoin;
+        } else {
+            return VariableMgr.getDefaultSessionVariable().eagerAggregationOnJoin;
+        }
+    }
+    
     @VariableMgr.VarAttr(
             name = ENABLE_PAGE_CACHE,
             description = {"控制是否启用 page cache。默认为 true。",
@@ -5846,6 +5874,12 @@ public class SessionVariable implements Serializable, Writable {
             return ConnectContext.get().getSessionVariable().feDebug;
         } else {
             return false;
+        }
+    }
+
+    public static void throwRuntimeExceptionWhenFeDebug(String msg) {
+        if (isFeDebug()) {
+            throw new RuntimeException(msg);
         }
     }
 }

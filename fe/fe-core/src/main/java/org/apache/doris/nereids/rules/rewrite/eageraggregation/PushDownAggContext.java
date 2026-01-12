@@ -19,16 +19,14 @@ package org.apache.doris.nereids.rules.rewrite.eageraggregation;
 
 import org.apache.doris.nereids.CascadesContext;
 import org.apache.doris.nereids.trees.expressions.Alias;
-import org.apache.doris.nereids.trees.expressions.NamedExpression;
 import org.apache.doris.nereids.trees.expressions.Slot;
 import org.apache.doris.nereids.trees.expressions.SlotReference;
 import org.apache.doris.nereids.trees.expressions.functions.agg.AggregateFunction;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
-import java.util.LinkedHashSet;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -39,12 +37,9 @@ import java.util.Set;
 public class PushDownAggContext {
     public static final int BIG_JOIN_BUILD_SIZE = 400_000;
     private final List<AggregateFunction> aggFunctions;
-    private final List<NamedExpression> groupKeys;
-    private final Map<AggregateFunction, Alias> aliasMap;
+    private final List<SlotReference> groupKeys;
+    private final IdentityHashMap<AggregateFunction, Alias> aliasMap;
     private final Set<Slot> aggFunctionsInputSlots;
-
-    // the group keys that eventually used to generate aggregation node
-    private final LinkedHashSet<SlotReference> finalGroupKeys = new LinkedHashSet<>();
 
     // cascadesContext is used for normalizeAgg
     private final CascadesContext cascadesContext;
@@ -55,7 +50,7 @@ public class PushDownAggContext {
      * constructor
      */
     public PushDownAggContext(List<AggregateFunction> aggFunctions,
-            List<NamedExpression> groupKeys,
+            List<SlotReference> groupKeys,
             CascadesContext cascadesContext) {
         this(aggFunctions, groupKeys, null, cascadesContext, false);
     }
@@ -64,22 +59,27 @@ public class PushDownAggContext {
      * constructor
      */
     public PushDownAggContext(List<AggregateFunction> aggFunctions,
-            List<NamedExpression> groupKeys, Map<AggregateFunction, Alias> aliasMap, CascadesContext cascadesContext,
+            List<SlotReference> groupKeys, Map<AggregateFunction, Alias> aliasMap, CascadesContext cascadesContext,
             boolean passThroughBigJoin) {
         this.groupKeys = groupKeys;
         this.aggFunctions = ImmutableList.copyOf(aggFunctions);
         this.cascadesContext = cascadesContext;
 
+        IdentityHashMap<AggregateFunction, Alias> builtAliasMap = new IdentityHashMap<>();
         if (aliasMap == null) {
-            ImmutableMap.Builder<AggregateFunction, Alias> aliasMapBuilder = ImmutableMap.builder();
             for (AggregateFunction aggFunction : this.aggFunctions) {
-                Alias alias = new Alias(aggFunction, aggFunction.getName());
-                aliasMapBuilder.put(aggFunction, alias);
+                builtAliasMap.put(aggFunction, new Alias(aggFunction, aggFunction.getName()));
             }
-            this.aliasMap = aliasMapBuilder.build();
         } else {
-            this.aliasMap = aliasMap;
+            for (AggregateFunction aggFunction : this.aggFunctions) {
+                Alias alias = aliasMap.get(aggFunction);
+                if (alias == null) {
+                    alias = new Alias(aggFunction, aggFunction.getName());
+                }
+                builtAliasMap.put(aggFunction, alias);
+            }
         }
+        this.aliasMap = builtAliasMap;
 
         this.aggFunctionsInputSlots = aggFunctions.stream()
                 .flatMap(aggFunction -> aggFunction.getInputSlots().stream())
@@ -92,7 +92,7 @@ public class PushDownAggContext {
         return new PushDownAggContext(aggFunctions, groupKeys, aliasMap, cascadesContext, true);
     }
 
-    public Map<AggregateFunction, Alias> getAliasMap() {
+    public IdentityHashMap<AggregateFunction, Alias> getAliasMap() {
         return aliasMap;
     }
 
@@ -100,24 +100,16 @@ public class PushDownAggContext {
         return aggFunctions;
     }
 
-    public List<NamedExpression> getGroupKeys() {
+    public List<SlotReference> getGroupKeys() {
         return groupKeys;
     }
 
-    public PushDownAggContext withGroupKeys(List<NamedExpression> groupKeys) {
+    public PushDownAggContext withGroupKeys(List<SlotReference> groupKeys) {
         return new PushDownAggContext(aggFunctions, groupKeys, aliasMap, cascadesContext, passThroughBigJoin);
     }
 
     public Set<Slot> getAggFunctionsInputSlots() {
         return aggFunctionsInputSlots;
-    }
-
-    public LinkedHashSet<SlotReference> getFinalGroupKeys() {
-        return finalGroupKeys;
-    }
-
-    public void addFinalGroupKey(SlotReference key) {
-        this.finalGroupKeys.add(key);
     }
 
     public CascadesContext getCascadesContext() {
@@ -126,5 +118,15 @@ public class PushDownAggContext {
 
     public boolean isPassThroughBigJoin() {
         return passThroughBigJoin;
+    }
+
+    @Override
+    public String toString() {
+        return "PushDownAggContext{"
+                + "aggFunctions=" + aggFunctions
+                + ", groupKeys=" + groupKeys
+                + ", aliasMap=" + aliasMap
+                + ", passThroughBigJoin=" + passThroughBigJoin
+                + '}';
     }
 }

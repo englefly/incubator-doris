@@ -18,6 +18,7 @@
 package org.apache.doris.nereids.rules.rewrite.eageraggregation;
 
 import org.apache.doris.nereids.jobs.JobContext;
+import org.apache.doris.nereids.rules.analysis.CheckAfterRewrite;
 import org.apache.doris.nereids.trees.expressions.Alias;
 import org.apache.doris.nereids.trees.expressions.EqualTo;
 import org.apache.doris.nereids.trees.expressions.Expression;
@@ -38,18 +39,17 @@ import com.google.common.collect.Sets;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
- * PushdownAggregationThroughJoinV2
+ * sum(if t1.a then t2.b)
+ * tpcds 2 and 59 query can be rewritten
  */
 public class PushdownSumIfAggregation extends DefaultPlanRewriter<JobContext> implements CustomRewriter {
-    private final Set<Class> pushDownAggFunctionSet = Sets.newHashSet(
-            Sum.class);
 
     @Override
     public Plan rewriteRoot(Plan plan, JobContext jobContext) {
-        return plan.accept(this, jobContext);
+        return plan;
+        //return plan.accept(this, jobContext);
     }
 
     @Override
@@ -113,6 +113,8 @@ public class PushdownSumIfAggregation extends DefaultPlanRewriter<JobContext> im
         SumAggContext sumAggContext = new SumAggContext(aliasToBePushDown, ifConditions, ifThenSlots, groupKeys);
         SumAggWriter writer = new SumAggWriter();
         Plan child = agg.child().accept(writer, sumAggContext);
+        CheckAfterRewrite checker = new CheckAfterRewrite();
+        checker.checkTreeAllSlotReferenceFromChildren(child);
         if (child != agg.child()) {
             List<NamedExpression> outputExpressions = agg.getOutputExpressions();
             List<NamedExpression> newOutputExpressions = new ArrayList<>();
