@@ -781,6 +781,7 @@ if [[ "${FE_MODULES}" != '' ]]; then
     if [[ "${CLEAN}" -eq 1 ]]; then
         clean_fe
     fi
+    ENCODING_MVN_OPT="-Dfile.encoding=UTF-8"
     DEPENDENCIES_MVN_OPTS=" "
     if [[ "${BUILD_OBS_DEPENDENCIES}" -eq 0 ]]; then
         DEPENDENCIES_MVN_OPTS+=" -Dobs.dependency.scope=provided "
@@ -788,19 +789,18 @@ if [[ "${FE_MODULES}" != '' ]]; then
     if [[ "${BUILD_COS_DEPENDENCIES}" -eq 0 ]]; then
         DEPENDENCIES_MVN_OPTS+=" -Dcos.dependency.scope=provided "
     fi
-    
     if [[ "${DISABLE_JAVA_CHECK_STYLE}" = "ON" ]]; then
         # Allowed user customer set env param USER_SETTINGS_MVN_REPO means settings.xml file path
         if [[ -n ${USER_SETTINGS_MVN_REPO} && -f ${USER_SETTINGS_MVN_REPO} ]]; then
-            "${MVN_CMD}" package -pl ${FE_MODULES:+${FE_MODULES}} -am -Dskip.doc=true -DskipTests -Dcheckstyle.skip=true ${MVN_OPT:+${MVN_OPT}} ${DEPENDENCIES_MVN_OPTS}  -gs "${USER_SETTINGS_MVN_REPO}" -T 1C
+            "${MVN_CMD}" package -pl ${FE_MODULES:+${FE_MODULES}} -am -Dskip.doc=true -DskipTests -Dcheckstyle.skip=true ${ENCODING_MVN_OPT} ${MVN_OPT:+${MVN_OPT}} ${DEPENDENCIES_MVN_OPTS}  -gs "${USER_SETTINGS_MVN_REPO}" -T 1C
         else
-            "${MVN_CMD}" package -pl ${FE_MODULES:+${FE_MODULES}} -am -Dskip.doc=true -DskipTests -Dcheckstyle.skip=true ${MVN_OPT:+${MVN_OPT}} ${DEPENDENCIES_MVN_OPTS}  -T 1C
+            "${MVN_CMD}" package -pl ${FE_MODULES:+${FE_MODULES}} -am -Dskip.doc=true -DskipTests -Dcheckstyle.skip=true ${ENCODING_MVN_OPT} ${MVN_OPT:+${MVN_OPT}} ${DEPENDENCIES_MVN_OPTS}  -T 1C
         fi
     else
         if [[ -n ${USER_SETTINGS_MVN_REPO} && -f ${USER_SETTINGS_MVN_REPO} ]]; then
-            "${MVN_CMD}" package -pl ${FE_MODULES:+${FE_MODULES}} -am -Dskip.doc=true -DskipTests ${MVN_OPT:+${MVN_OPT}} ${DEPENDENCIES_MVN_OPTS}  -gs "${USER_SETTINGS_MVN_REPO}" -T 1C
+            "${MVN_CMD}" package -pl ${FE_MODULES:+${FE_MODULES}} -am -Dskip.doc=true -DskipTests ${ENCODING_MVN_OPT} ${MVN_OPT:+${MVN_OPT}} ${DEPENDENCIES_MVN_OPTS}  -gs "${USER_SETTINGS_MVN_REPO}" -T 1C
         else
-            "${MVN_CMD}" package -pl ${FE_MODULES:+${FE_MODULES}} -am -Dskip.doc=true -DskipTests ${MVN_OPT:+${MVN_OPT}} ${DEPENDENCIES_MVN_OPTS}  -T 1C
+            "${MVN_CMD}" package -pl ${FE_MODULES:+${FE_MODULES}} -am -Dskip.doc=true -DskipTests ${ENCODING_MVN_OPT} ${MVN_OPT:+${MVN_OPT}} ${DEPENDENCIES_MVN_OPTS}  -T 1C
         fi
     fi
     cd "${DORIS_HOME}"

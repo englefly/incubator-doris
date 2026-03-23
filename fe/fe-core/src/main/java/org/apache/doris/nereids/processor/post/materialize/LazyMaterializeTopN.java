@@ -72,17 +72,46 @@ public class LazyMaterializeTopN extends PlanPostProcessor {
 
     @Override
     public Plan visitPhysicalTopN(PhysicalTopN topN, CascadesContext ctx) {
+<<<<<<< Updated upstream
         try {
             Plan result = computeTopN(topN, ctx);
             if (SessionVariable.isFeDebug()) {
                 Validator validator = new Validator();
                 validator.processRoot(result, ctx);
+=======
+        // LOCAL_SORT is the first phase of a two-phase TopN; lazy materialize must only be applied
+        // to the MERGE/GATHER phase (case 1), so never materialize local TopN.
+        // But we must still recurse into children: the local TopN may sit above a union whose
+        // branches contain inner merge TopNs that should each be independently materialized (case 3).
+        if (topN.getSortPhase().isLocal()) {
+            return DefaultPlanRewriter.visitChildren(this, topN, ctx);
+        }
+        // Top-down: try to apply lazy materialize to the current (merge/gather) TopN first.
+        // MaterializeProbeVisitor uses the default visit() for any TopN it encounters while tracing,
+        // so outerTopN can trace through innerTopN to the source relation (case 2).
+        // If computeTopN succeeds, return immediately without recursing so that innerTopN is not
+        // double-processed (case 1: mergeTopN succeeds, localTopN below is left alone;
+        // case 2: outerTopN succeeds, innerTopN below is left alone).
+        try {
+            Plan result = computeTopN(topN, ctx);
+            if (result != topN) {
+                if (SessionVariable.isFeDebug()) {
+                    Validator validator = new Validator();
+                    validator.processRoot(result, ctx);
+                }
+                return result;
+>>>>>>> Stashed changes
             }
-            return result;
         } catch (Exception e) {
             LOG.warn("lazy materialize topn failed", e);
+<<<<<<< Updated upstream
             return topN;
+=======
+>>>>>>> Stashed changes
         }
+        // computeTopN returned topN unchanged (e.g., blocked by union or no eligible slots).
+        // Recurse into children to handle case 3: siblings under union each get processed independently.
+        return DefaultPlanRewriter.visitChildren(this, topN, ctx);
     }
 
     private Plan computeTopN(PhysicalTopN topN, CascadesContext ctx) {
