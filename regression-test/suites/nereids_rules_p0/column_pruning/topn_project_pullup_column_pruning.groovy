@@ -56,6 +56,18 @@ suite("topn_project_pullup_column_pruning") {
     assertTrue(topNPos >= 0)
     assertTrue(substringPos < topNPos)
 
+    def nestedLazyPlan = sql """
+        explain verbose
+        select id, substring(struct_element(struct_col, 'city'), 1) as city
+        from tppcp_tbl
+        order by id
+        limit 3
+    """
+    def nestedLazyPlanString = nestedLazyPlan.collect { it[0] }.join("\n")
+    assertTrue(nestedLazyPlanString.contains("VMaterializeNode"))
+    assertTrue(nestedLazyPlanString.contains("type=struct<city:text>"))
+    assertTrue(nestedLazyPlanString.contains("final projections: id[#0], __DORIS_GLOBAL_ROWID_COL__tppcp_tbl"))
+
     qt_project_after_topn """
         select *, substring(struct_element(struct_col, 'city'), 1) as city
         from tppcp_tbl

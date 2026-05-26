@@ -168,8 +168,15 @@ public class PhysicalLazyMaterialize<CHILD_TYPE extends Plan> extends PhysicalUn
                 // Set originalColumn on the lazy slot so that createSlotDesc can write
                 // colUniqueId into the thrift SlotDescriptor — BE needs it to resolve
                 // the column during remote fetch.
-                Column originalColumn = materializeMap.get(lazySlot).baseSlot.getOriginalColumn().get();
-                outputBuilder.add(((SlotReference) lazySlot).withColumn(originalColumn));
+                SlotReference baseSlot = materializeMap.get(lazySlot).baseSlot;
+                Column originalColumn = baseSlot.getOriginalColumn().get();
+                SlotReference outputSlot = ((SlotReference) lazySlot).withColumn(originalColumn);
+                if (baseSlot.getAllAccessPaths().isPresent()) {
+                    outputSlot = outputSlot.withAccessPaths(
+                            baseSlot.getAllAccessPaths().get(), baseSlot.getPredicateAccessPaths().get(),
+                            baseSlot.getDisplayAllAccessPaths().get(), baseSlot.getDisplayPredicateAccessPaths().get());
+                }
+                outputBuilder.add(outputSlot);
                 lazyColumnForRel.add(originalColumn);
                 lazyBaseColumnIdxForRel.add(relationTable.getBaseColumnIdxByName(lazySlot.getName()));
                 lazySlotLocationForRel.add(loc);
