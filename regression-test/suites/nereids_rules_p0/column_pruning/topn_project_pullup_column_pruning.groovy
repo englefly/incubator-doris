@@ -58,7 +58,7 @@ suite("topn_project_pullup_column_pruning") {
 
     def nestedLazyPlan = sql """
         explain verbose
-        select id, substring(struct_element(struct_col, 'city'), 1) as city
+        select *, substring(struct_element(struct_col, 'city'), 1) as city
         from tppcp_tbl
         order by id
         limit 3

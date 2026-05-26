@@ -552,6 +552,9 @@ public class SlotTypeReplacer extends DefaultPlanRewriter<Void> {
         } else if (e instanceof Cast) {
             return rewriteCast((Cast) e, fillAccessPath);
         } else if (e instanceof SlotReference) {
+            if (((SlotReference) e).getAllAccessPaths().isPresent()) {
+                return e;
+            }
             AccessPathInfo accessPathInfo = replacedDataTypes.get(((SlotReference) e).getExprId().asInt());
             if (accessPathInfo != null) {
                 SlotReference newSlot = (SlotReference) ((SlotReference) e).withNullableAndDataType(
