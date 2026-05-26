@@ -106,15 +106,9 @@ public class OperativeColumnDerive extends DefaultPlanRewriter<DeriveContext> im
     @Override
     public Plan visitLogicalProject(LogicalProject<? extends Plan> project, DeriveContext context) {
         for (NamedExpression ne : project.getProjects()) {
-            if (!(ne instanceof Slot)) {
-                if (ne.child(0) instanceof Slot) {
-                    if (context.operativeSlotIds.contains(ne.getExprId().asInt())) {
-                        context.operativeSlotIds.add(((Slot) ne.child(0)).getExprId().asInt());
-                    }
-                } else {
-                    context.addOperativeSlots(ne);
-                    context.addOperativeSlot(ne);
-                }
+            if (!(ne instanceof Slot) && context.operativeSlotIds.contains(ne.getExprId().asInt())) {
+                context.addOperativeSlots(ne);
+                context.addOperativeSlot(ne);
             }
         }
         Plan plan = visitChildren(this, project, context);
