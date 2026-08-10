@@ -735,6 +735,32 @@ public class PruneNestedColumnTest extends TestWithFeService implements MemoPatt
     }
 
     @Test
+    public void testMapKeysSubscriptIsNullReadsKeyData() throws Exception {
+        // map_keys(m)[i] IS NULL asks whether the i-th key exists: an empty or NULL map
+        // makes the out-of-range subscript evaluate to NULL. The KEYS sub-column is never
+        // nullable, so its null map cannot answer this (and a NULL_MAP_ONLY read on it would
+        // hit the BE assertion for non-nullable columns). The collector must emit a DATA path
+        // for the key data instead of META [m, KEYS, NULL].
+        assertColumn("select 100 from str_tbl where map_keys(map_col)[1] is null",
+                "map<text,text>",
+                ImmutableList.of(path("map_col", "KEYS")),
+                ImmutableList.of(path("map_col", "KEYS"))
+        );
+        assertColumn("select 100 from str_tbl where map_keys(map_col)[1] is not null",
+                "map<text,text>",
+                ImmutableList.of(path("map_col", "KEYS")),
+                ImmutableList.of(path("map_col", "KEYS"))
+        );
+        // map_values(m)[i] IS NULL is a value-null check: the VALUES sub-column has a real
+        // per-element null map, so the META path is kept for the value side.
+        assertColumn("select 100 from str_tbl where map_values(map_col)[1] is null",
+                "map<text,text>",
+                ImmutableList.of(metaPath("map_col", "VALUES", "NULL")),
+                ImmutableList.of(metaPath("map_col", "VALUES", "NULL"))
+        );
+    }
+
+    @Test
     public void testProjectFilter() throws Throwable {
         assertColumn("select element_at(s, 'data') from tbl where element_at(s, 'city') is not null",
                 "struct<city:text,data:array<map<int,struct<a:int,b:double>>>>",

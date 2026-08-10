@@ -144,9 +144,7 @@ public class AccessPathExpressionCollector extends DefaultExpressionVisitor<Void
             // nullability which may be synthetic (e.g. from outer join). If the physical column
             // has no null map or is unknown, suppress this path.
             // (Field-level null paths like [s, field, NULL] were already validated upstream.)
-            if (context.type == ColumnAccessPathType.META
-                    && isUnderIsNull(context.accessPathBuilder.accessPath)
-                    && !hasPhysicalNullMap(slotReference)) {
+            if (isUnderIsNull(context) && !hasPhysicalNullMap(slotReference)) {
                 return null;
             }
             context.accessPathBuilder.addPrefix(slotReference.getName().toLowerCase());
@@ -161,9 +159,7 @@ public class AccessPathExpressionCollector extends DefaultExpressionVisitor<Void
                 // Accessed via an offset-only function (e.g. length()) or null-check (IS NULL).
                 // Builder already has "OFFSET"/"NULL" at the tail; add the column name as prefix.
                 // For META NULL paths, suppress when the physical column has no null map.
-                if (context.type == ColumnAccessPathType.META
-                        && isUnderIsNull(context.accessPathBuilder.accessPath)
-                        && !hasPhysicalNullMap(slotReference)) {
+                if (isUnderIsNull(context) && !hasPhysicalNullMap(slotReference)) {
                     return null;
                 }
                 context.accessPathBuilder.addPrefix(slotReference.getName());
@@ -186,7 +182,7 @@ public class AccessPathExpressionCollector extends DefaultExpressionVisitor<Void
         // inflated by outer join, while the former reflects the physical column's null map.
         // Only NULL paths need the null-map check; OFFSET paths don't depend on nullability.
         if (!(dataType instanceof NestedColumnPrunable) && !dataType.isStringLikeType()
-                && isUnderIsNull(context.accessPathBuilder.accessPath)
+                && isUnderIsNull(context)
                 && hasPhysicalNullMap(slotReference)) {
             context.accessPathBuilder.addPrefix(slotReference.getName());
             ImmutableList<String> path = ImmutableList.copyOf(context.accessPathBuilder.accessPath);
@@ -363,8 +359,7 @@ public class AccessPathExpressionCollector extends DefaultExpressionVisitor<Void
             DataType fieldType = fieldName.getDataType();
             if (fieldName.isLiteral() && (fieldType.isIntegerLikeType() || fieldType.isStringLikeType())) {
                 // Only emit META [s, field, NULL] when the selected field itself is nullable.
-                if (context.type == ColumnAccessPathType.META
-                        && isUnderIsNull(context.accessPathBuilder.getPathList())) {
+                if (isUnderIsNull(context)) {
                     StructField field = resolveStructField(
                             (StructType) first.getDataType(), fieldName);
                     if (field == null || !field.isNullable()) {
@@ -400,7 +395,7 @@ public class AccessPathExpressionCollector extends DefaultExpressionVisitor<Void
     @Override
     public Void visitMapKeys(MapKeys mapKeys, CollectorContext context) {
         LinkedList<String> suffixPath = context.accessPathBuilder.accessPath;
-        if (isUnderIsNull(suffixPath)) {
+        if (isUnderIsNull(context)) {
             // map_keys(nullable_map) returns a NULL array only when the parent map is NULL.
             // The NULL suffix therefore belongs to the map itself, not to the KEYS child.
             return continueCollectAccessPath(mapKeys.getArgument(0), context);
@@ -408,9 +403,21 @@ public class AccessPathExpressionCollector extends DefaultExpressionVisitor<Void
         if (!suffixPath.isEmpty() && suffixPath.get(0).equals(AccessPathInfo.ACCESS_ALL)) {
             CollectorContext removeStarContext
                     = new CollectorContext(context.statementContext, context.bottomFilter);
-            removeStarContext.accessPathBuilder.accessPath.addAll(suffixPath.subList(1, suffixPath.size()));
+            List<String> remainingSuffix = suffixPath.subList(1, suffixPath.size());
+            if (context.type == ColumnAccessPathType.META
+                    && remainingSuffix.size() == 1
+                    && AccessPathInfo.ACCESS_NULL.equals(remainingSuffix.get(0))) {
+                // map_keys(m)[i] IS NULL asks whether the i-th key exists: an empty or NULL
+                // map makes the out-of-range subscript evaluate to NULL. The KEYS sub-column
+                // is never nullable, so its null map cannot answer this (and a NULL_MAP_ONLY
+                // read on it would hit the BE assertion for non-nullable columns). Read the
+                // key data itself as a DATA path instead.
+                removeStarContext.setType(ColumnAccessPathType.DATA);
+            } else {
+                removeStarContext.accessPathBuilder.accessPath.addAll(remainingSuffix);
+                removeStarContext.setType(context.type);
+            }
             removeStarContext.accessPathBuilder.addPrefix(AccessPathInfo.ACCESS_MAP_KEYS);
-            removeStarContext.setType(context.type);
             return continueCollectAccessPath(mapKeys.getArgument(0), removeStarContext);
         }
         context.accessPathBuilder.addPrefix(AccessPathInfo.ACCESS_MAP_KEYS);
@@ -420,7 +427,7 @@ public class AccessPathExpressionCollector extends DefaultExpressionVisitor<Void
     @Override
     public Void visitMapValues(MapValues mapValues, CollectorContext context) {
         LinkedList<String> suffixPath = context.accessPathBuilder.accessPath;
-        if (isUnderIsNull(suffixPath)) {
+        if (isUnderIsNull(context)) {
             // map_values(nullable_map) returns a NULL array only when the parent map is NULL.
             // A map entry whose value is NULL still produces a non-NULL values array.
             return continueCollectAccessPath(mapValues.getArgument(0), context);
@@ -437,8 +444,15 @@ public class AccessPathExpressionCollector extends DefaultExpressionVisitor<Void
         return continueCollectAccessPath(mapValues.getArgument(0), context);
     }
 
-    private static boolean isUnderIsNull(List<String> suffixPath) {
-        return suffixPath.size() == 1 && AccessPathInfo.ACCESS_NULL.equals(suffixPath.get(0));
+    private static boolean isUnderIsNull(CollectorContext context) {
+        // Only a META context can carry a synthetic NULL suffix: visitIsNull (and the
+        // OFFSET visitors) always set the type to META when appending the marker. A DATA
+        // path ending in "NULL" is a real struct field named null (StructField lowercases
+        // field names), so the raw string check alone must not classify it as a null check.
+        List<String> suffixPath = context.accessPathBuilder.getPathList();
+        return context.type == ColumnAccessPathType.META
+                && suffixPath.size() == 1
+                && AccessPathInfo.ACCESS_NULL.equals(suffixPath.get(0));
     }
 
     @Override
@@ -462,7 +476,7 @@ public class AccessPathExpressionCollector extends DefaultExpressionVisitor<Void
         //     [s, city]        ← from key arg (fresh context → DATA path)
         //     [s, city, NULL]  ← from IS NULL
         //   NestedColumnPruning sees [s, city] and strips [s, city, NULL] in prune phase.
-        if (isUnderIsNull(context.accessPathBuilder.accessPath)) {
+        if (isUnderIsNull(context)) {
             // Shape A: skip KEYS prefix, route NULL directly to the map column.
             return continueCollectAccessPath(mapContainsKey.getArgument(0), context);
         }
@@ -483,7 +497,7 @@ public class AccessPathExpressionCollector extends DefaultExpressionVisitor<Void
         //
         // Shape A (parent is IS NULL): skip VALUES prefix, route NULL to m → m.NULL.
         // Shape B (regular predicate): add VALUES prefix for m, visit value arg with fresh context.
-        if (isUnderIsNull(context.accessPathBuilder.accessPath)) {
+        if (isUnderIsNull(context)) {
             return continueCollectAccessPath(mapContainsValue.getArgument(0), context);
         }
         context.accessPathBuilder.addPrefix(AccessPathInfo.ACCESS_MAP_VALUES);
@@ -502,7 +516,7 @@ public class AccessPathExpressionCollector extends DefaultExpressionVisitor<Void
         // Shape A (parent is IS NULL): skip sub-column prefix, route NULL to m → m.NULL.
         // Shape B (regular predicate): add ACCESS_ALL for m (needs both keys and values),
         //     visit key/value args with fresh context.
-        if (isUnderIsNull(context.accessPathBuilder.accessPath)) {
+        if (isUnderIsNull(context)) {
             return continueCollectAccessPath(mapContainsEntry.getArgument(0), context);
         }
         context.accessPathBuilder.addPrefix(AccessPathInfo.ACCESS_ALL);
@@ -721,7 +735,7 @@ public class AccessPathExpressionCollector extends DefaultExpressionVisitor<Void
 
     @Override
     public Void visitIf(If ifExpr, CollectorContext context) {
-        if (isUnderIsNull(context.accessPathBuilder.accessPath)) {
+        if (isUnderIsNull(context)) {
             ifExpr.getCondition().accept(this, new CollectorContext(context.statementContext, context.bottomFilter));
             ifExpr.getTrueValue().accept(this, copyContext(context));
             ifExpr.getFalseValue().accept(this, copyContext(context));
